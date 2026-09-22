@@ -2,7 +2,7 @@ export const PROFILE = {
   name: 'Anuj',
   title: 'Anuj | AI Entrepreneur',
   heroType: 'I am Anuj',
-  headline: 'The mind behind intelligent innovation',
+  headline: 'The intelligence behind tomorrow\'s world',
   dreamer: '19-year-old Dreamer & Builder',
   from: 'from Harsola, Haryana',
   location: 'Harsola, Kaithal, Haryana, India',
