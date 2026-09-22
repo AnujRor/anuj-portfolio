@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="40%" r="80%">
+      <stop offset="0%" stop-color="#00f6ff" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#0d1117" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ring" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00f6ff"/>
+      <stop offset="100%" stop-color="#b026ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="#0d1117"/>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <circle cx="256" cy="256" r="206" fill="#111a24" stroke="url(#ring)" stroke-width="6"/>
+  <circle cx="256" cy="204" r="64" fill="#00f6ff" fill-opacity="0.18" stroke="#00f6ff" stroke-width="5"/>
+  <circle cx="256" cy="204" r="10" fill="#00f6ff"/>
+  <path d="M256 370 v-40 M236 340 h40 M256 300 c-46 0 -80 40 -80 92 h160 c0 -52 -34 -92 -80 -92 z" fill="none" stroke="#00f6ff" stroke-width="5" stroke-linejoin="round"/>
+  <text x="256" y="450" text-anchor="middle" font-family="Arial" font-size="22" font-weight="bold" fill="#00f6ff">Profile Photo</text>
+</svg>

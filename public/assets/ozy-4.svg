@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="g" cx="50%" cy="40%" r="80%">
+      <stop offset="0%" stop-color="#b026ff" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#0d1117" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse">
+      <path d="M30 0H0V30" fill="none" stroke="#b026ff" stroke-opacity="0.08"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="600" fill="#0d1117"/>
+  <rect width="800" height="600" fill="url(#grid)"/>
+  <rect width="800" height="600" fill="url(#g)"/>
+  <rect x="24" y="24" width="752" height="552" fill="none" stroke="#b026ff" stroke-opacity="0.4" stroke-width="2" rx="16"/>
+  <circle cx="70" cy="70" r="6" fill="#b026ff" fill-opacity="0.9"/>
+  <text x="95" y="78" font-family="Arial" font-size="20" fill="#ffffff" fill-opacity="0.6">Ozy Sneakers</text>
+  <text x="400" y="150" text-anchor="middle" font-family="Arial" font-size="52" font-weight="bold" fill="#ffffff">undefined</text>
+  <text x="400" y="300" text-anchor="middle" font-family="Arial" font-size="44" font-weight="bold" fill="#b026ff">Ozy Sneakers</text>
+  <text x="400" y="360" text-anchor="middle" font-family="Arial" font-size="26" fill="#e0e0e0" fill-opacity="0.85">Live Demo</text>
+  <text x="400" y="410" text-anchor="middle" font-family="Arial" font-size="18" fill="#888888">Portfolio Screenshot Placeholder</text>
+  <rect x="300" y="470" width="200" height="44" rx="22" fill="#b026ff" fill-opacity="0.15" stroke="#b026ff" stroke-opacity="0.5"/>
+  <text x="400" y="499" text-anchor="middle" font-family="Arial" font-size="17" fill="#b026ff">OS</text>
+</svg>
