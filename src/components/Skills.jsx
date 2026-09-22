@@ -64,6 +64,7 @@ function Counter({ target, suffix, duration }) {
 export default function Skills() {
   const container = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.1 } } }
   const item = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }
+  const [active, setActive] = useState(null)
 
   return (
     <section id="skills" className="py-24 relative bg-tech-dark/60">
@@ -81,9 +82,16 @@ export default function Skills() {
         <motion.div variants={container} initial="hidden" whileInView="visible" viewport={{ once: true }} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-20">
           {PROFILE.skills.map((s) => {
             const Icon = ICONS[s.iconType] || Lightbulb
+            const showName = active === s.name
             return (
-              <motion.div key={s.name} variants={item} whileHover={{ scale: 1.05 }} className="skill-card group">
-                <div className="relative bg-dark-slate bg-opacity-50 backdrop-blur-sm p-6 rounded-lg flex flex-col items-center text-center overflow-hidden">
+              <motion.div
+                key={s.name}
+                variants={item}
+                whileHover={{ scale: 1.05 }}
+                className="skill-card group cursor-pointer"
+                onClick={() => setActive(showName ? null : s.name)}
+              >
+                <div className="relative bg-dark-slate bg-opacity-50 backdrop-blur-sm p-6 rounded-lg flex flex-col items-center justify-center text-center overflow-hidden min-h-[130px]">
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <div className="absolute inset-x-0 top-0 h-[2px] bg-neon-blue" />
                     <div className="absolute inset-y-0 right-0 w-[2px] bg-neon-blue" />
@@ -91,10 +99,24 @@ export default function Skills() {
                     <div className="absolute inset-y-0 left-0 w-[2px] bg-neon-blue" />
                     <div className="absolute inset-0 shadow-[0_0_15px_rgba(0,246,255,0.3)] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </div>
-                  <div className="w-12 h-12 mb-4 text-neon-blue flex items-center justify-center">
-                    <Icon size={24} className="group-hover:scale-110 transition-transform" />
+                  {s.image ? (
+                    <div className={`w-16 h-16 mb-4 bg-white rounded-full flex items-center justify-center p-2 transition-transform duration-300 ${showName ? 'opacity-0' : 'group-hover:scale-110'}`}>
+                      <img src={s.image} alt={s.name} loading="lazy" className="w-10 h-10 object-contain" onError={(e) => { e.currentTarget.parentElement.style.display = 'none' }} />
+                    </div>
+                  ) : (
+                    <div className="w-12 h-12 mb-4 text-neon-blue flex items-center justify-center">
+                      <Icon size={24} className="group-hover:scale-110 transition-transform" />
+                    </div>
+                  )}
+                  <div
+                    className={`absolute inset-0 flex items-center justify-center bg-tech-dark/90 backdrop-blur-sm transition-opacity duration-300 ${
+                      showName ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                    }`}
+                  >
+                    <span className="font-exo font-semibold text-white text-sm md:text-base px-3 text-center">
+                      {s.name}
+                    </span>
                   </div>
-                  <h3 className="font-exo font-semibold text-white mb-2">{s.name}</h3>
                 </div>
               </motion.div>
             )

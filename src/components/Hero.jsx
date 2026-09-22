@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
-import { ArrowDown, ArrowRight } from 'lucide-react'
+import { ArrowDown } from 'lucide-react'
 import { PROFILE } from '../data'
 
 function useTypewriter(words, typeSpeed = 60, deleteSpeed = 30, pause = 1600) {
@@ -95,23 +95,7 @@ export default function Hero() {
               <span className="text-gradient">{PROFILE.headline}</span>
             </h2>
 
-            <div className="flex flex-wrap gap-4">
-              <a
-                href="#about"
-                className="group px-6 py-3 bg-tech-dark border border-neon-blue rounded-md font-medium text-neon-blue hover:bg-neon-blue/10 transition-all duration-300 flex items-center shadow-glow"
-              >
-                <span>Explore My Journey</span>
-                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
-              </a>
-              <a
-                href="#projects"
-                className="group px-6 py-3 bg-neon-blue text-tech-dark rounded-md font-medium hover:bg-neon-blue/90 transition-all duration-300 border border-neon-blue flex items-center"
-              >
-                <span>View Projects</span>
-                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
-              </a>
-            </div>
-          </motion.div>
+            </motion.div>
 
           <motion.div
             initial={{ opacity: 0 }}

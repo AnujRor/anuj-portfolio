@@ -15,7 +15,7 @@ export default function About() {
           transition={{ duration: 0.7 }}
           className="text-center font-exo text-3xl md:text-4xl lg:text-5xl font-bold mb-16 text-white"
         >
-          Who is <span className="text-neon-blue">{PROFILE.name}</span>?
+          About <span className="text-neon-blue">Me</span>
         </motion.h2>
 
         <div className="flex flex-col-reverse md:flex-row items-center gap-12 mb-16">
