@@ -6,7 +6,8 @@ export const PROFILE = {
   dreamer: '19-year-old Dreamer & Builder',
   from: 'from Harsola, Haryana',
   location: 'Harsola, Kaithal, Haryana, India',
-  photo: '/assets/profile.svg',
+  photo: '/assets/profile-hero.png',
+  aboutPhoto: '/assets/profile-about.png',
   about: {
     paragraphs: [
       'Growing up in a small village in Haryana, a place where the idea of building artificial intelligence felt like a distant dream. But even as a kid, I never thought like the people around me. While others talked about jobs and safety, I dreamt about creating something the world had never seen.',

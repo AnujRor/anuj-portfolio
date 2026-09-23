@@ -50,7 +50,7 @@ export default function About() {
               <div className="absolute inset-0 bg-neon-blue/20 rounded-full blur-xl transform -translate-x-2 -translate-y-2" />
               <div className="absolute inset-0 bg-neon-purple/10 rounded-full blur-xl transform translate-x-2 translate-y-2" />
               <div className="relative rounded-full border-4 border-neon-blue/50 overflow-hidden w-64 h-64 md:w-80 md:h-80">
-                <img src={PROFILE.photo} alt={`${PROFILE.name} - AI Entrepreneur`} className="w-full h-full object-cover" />
+                <img src={PROFILE.aboutPhoto} alt={`${PROFILE.name} - AI Entrepreneur`} className="w-full h-full object-cover" />
                 <div className="absolute inset-0 border-4 border-neon-blue/20 rounded-full animate-ping-slow" />
                 <div className="absolute inset-0 scale-110 border-2 border-neon-blue/10 rounded-full" />
               </div>
