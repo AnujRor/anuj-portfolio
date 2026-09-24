@@ -6,8 +6,8 @@ export const PROFILE = {
   dreamer: '19-year-old Dreamer & Builder',
   from: 'from Harsola, Haryana',
   location: 'Harsola, Kaithal, Haryana, India',
-  photo: '/assets/profile-hero.png',
-  aboutPhoto: '/assets/profile-about.png',
+  photo: '/assets/profile-hero.webp',
+  aboutPhoto: '/assets/profile-about.webp',
   about: {
     paragraphs: [
       'Growing up in a small village in Haryana, a place where the idea of building artificial intelligence felt like a distant dream. But even as a kid, I never thought like the people around me. While others talked about jobs and safety, I dreamt about creating something the world had never seen.',
@@ -199,5 +199,67 @@ Supports hundreds of platforms with multiple quality options, from HD to audio-o
       'Clean and simple interface',
     ],
     demoLink: '#',
+  },
+]
+// Blog posts — edit, add or remove freely. `content` is a list of blocks:
+// plain strings become paragraphs, { h: '...' } becomes a heading, { quote: '...' } a pull quote.
+export const BLOG_POSTS = [
+  {
+    slug: 'from-harsola-to-ai',
+    title: 'From Harsola to AI: How a Village Kid Started Building Intelligence',
+    excerpt: 'No college, no team, no funding — just curiosity and a laptop. This is how my journey into artificial intelligence began.',
+    date: '2026-09-10',
+    readTime: '5 min read',
+    category: 'Journey',
+    cover: '/assets/profile-hero.png',
+    content: [
+      'Growing up in Harsola, a small village in Haryana, building artificial intelligence felt like something that only happened in big cities and bigger companies. But I never stopped asking one question: why not me?',
+      { h: 'The first spark' },
+      'In 2025 I started experimenting with AI tools. At first it was just curiosity — what can these models actually do? Very quickly curiosity turned into obsession. I spent nights learning, breaking things and building them again.',
+      { quote: "I didn't study AI in college. But I built it anyway." },
+      { h: 'What I learned' },
+      'You don\'t need permission to start. The internet is the biggest university in the world, and every tool you need is one search away. What you do need is consistency — showing up every single day, even when nothing works.',
+      'This blog is where I\'ll share everything I learn along the way: the wins, the failures and the lessons in between.',
+    ],
+  },
+  {
+    slug: 'building-ai-dost',
+    title: 'Building AI Dost: An AI That Talks Like a Real Friend',
+    excerpt: 'The story behind my flagship project — a voice AI companion that listens, speaks and actually cares.',
+    date: '2026-08-22',
+    readTime: '6 min read',
+    category: 'Projects',
+    cover: '/assets/aidost-main.svg',
+    content: [
+      'AI Dost started with a simple idea: what if technology didn\'t just work for you, but stayed by your side like a friend?',
+      { h: 'Why voice?' },
+      'Typing to an AI feels like using a tool. Talking to one feels like a conversation. That\'s why I built AI Dost around real-time voice — so it feels natural, human and warm.',
+      { h: 'The stack' },
+      'Under the hood AI Dost combines large language models for thinking, speech-to-text for listening, and expressive text-to-speech for talking — all streamed in real time so the conversation never feels slow.',
+      { quote: 'The goal isn\'t to build a smarter chatbot. It\'s to build a better friend.' },
+      'There\'s still a long way to go, but every version gets a little more human.',
+    ],
+  },
+  {
+    slug: 'real-time-voice-ai-lessons',
+    title: '5 Lessons From Building Real-Time Voice AI',
+    excerpt: 'Latency, interruptions, emotions — the hard parts nobody tells you about when you build a voice assistant.',
+    date: '2026-07-30',
+    readTime: '4 min read',
+    category: 'Tech',
+    cover: '/assets/caption-main.svg',
+    content: [
+      'Building a voice assistant that feels natural is much harder than it looks. Here are the biggest lessons I\'ve learned so far.',
+      { h: '1. Latency is everything' },
+      'If the reply takes more than a second, the magic breaks. Streaming every step — listening, thinking and speaking — is the only way to make it feel alive.',
+      { h: '2. People interrupt' },
+      'Real conversations aren\'t turn-based. Your assistant has to stop talking the moment the user starts.',
+      { h: '3. Voice carries emotion' },
+      'The same sentence can sound caring or cold. Choosing the right voice matters as much as choosing the right model.',
+      { h: '4. Keep answers short' },
+      'What reads well on a screen sounds far too long out loud. Spoken answers need to be short and direct.',
+      { h: '5. Ship, then improve' },
+      'No version is perfect. Put it in front of real people, listen, and make it better every day.',
+    ],
   },
 ]

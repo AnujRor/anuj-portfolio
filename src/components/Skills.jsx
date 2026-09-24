@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
+import { useEffect, useRef, useState } from 'react'
+import { motion, useInView } from 'framer-motion'
 import {
   Bot,
   Volume2,
@@ -13,6 +13,7 @@ import {
   Lightbulb,
 } from 'lucide-react'
 import { PROFILE } from '../data'
+import { SectionTitle, SpotlightCard } from './fx'
 
 const ICONS = {
   Bot,
@@ -28,115 +29,92 @@ const ICONS = {
 }
 
 function Counter({ target, suffix, duration }) {
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true, amount: 0.5 })
   const [value, setValue] = useState(0)
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const start = performance.now()
-            const tick = (now) => {
-              const progress = Math.min((now - start) / duration, 1)
-              setValue(Math.floor(progress * target))
-              if (progress < 1) requestAnimationFrame(tick)
-            }
-            requestAnimationFrame(tick)
-            observer.disconnect()
-          }
-        })
-      },
-      { threshold: 0.2 },
-    )
-    const el = document.querySelector('.stats-counter')
-    if (el) observer.observe(el)
-    return () => observer.disconnect()
-  }, [target, duration])
+    if (!inView) return
+    const start = performance.now()
+    let raf
+    const tick = (now) => {
+      const progress = Math.min((now - start) / duration, 1)
+      setValue(Math.floor((1 - Math.pow(1 - progress, 4)) * target))
+      if (progress < 1) raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [inView, target, duration])
 
   return (
-    <>
+    <span ref={ref}>
       {value}
       {suffix && <span className="text-neon-blue">{suffix}</span>}
-    </>
+    </span>
   )
 }
 
 export default function Skills() {
-  const container = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.1 } } }
-  const item = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }
+  const container = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.07 } } }
+  const item = {
+    hidden: { opacity: 0, y: 30, scale: 0.9, filter: 'blur(6px)' },
+    visible: { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)', transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+  }
   const [active, setActive] = useState(null)
 
   return (
-    <section id="skills" className="py-24 relative bg-tech-dark/60">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center font-exo text-3xl md:text-4xl font-bold mb-16"
-        >
-          My <span className="text-neon-blue">Capabilities</span>
-        </motion.h2>
+    <section id="skills" className="py-28 relative">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
+        <SectionTitle index="02" eyebrow="Toolkit" accent="Capabilities">
+          My
+        </SectionTitle>
 
-        <motion.div variants={container} initial="hidden" whileInView="visible" viewport={{ once: true }} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-20">
-          {PROFILE.skills.map((s) => {
+        <motion.div variants={container} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-5 mb-24">
+          {PROFILE.skills.map((s, i) => {
             const Icon = ICONS[s.iconType] || Lightbulb
             const showName = active === s.name
             return (
-              <motion.div
-                key={s.name}
-                variants={item}
-                whileHover={{ scale: 1.05 }}
-                className="skill-card group cursor-pointer"
-                onClick={() => setActive(showName ? null : s.name)}
-              >
-                <div className="relative bg-dark-slate bg-opacity-50 backdrop-blur-sm p-6 rounded-lg flex flex-col items-center justify-center text-center overflow-hidden min-h-[130px]">
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <div className="absolute inset-x-0 top-0 h-[2px] bg-neon-blue" />
-                    <div className="absolute inset-y-0 right-0 w-[2px] bg-neon-blue" />
-                    <div className="absolute inset-x-0 bottom-0 h-[2px] bg-neon-blue" />
-                    <div className="absolute inset-y-0 left-0 w-[2px] bg-neon-blue" />
-                    <div className="absolute inset-0 shadow-[0_0_15px_rgba(0,246,255,0.3)] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <motion.div key={s.name} variants={item} whileHover={{ y: -6 }} whileTap={{ scale: 0.97 }} onClick={() => setActive(showName ? null : s.name)} className="clickable">
+                <SpotlightCard
+                  color={i % 2 ? '176, 38, 255' : '0, 246, 255'}
+                  className="h-full rounded-2xl glass p-6 flex flex-col items-center justify-center text-center overflow-hidden min-h-[150px] cursor-pointer"
+                >
+                  <div className="relative mb-4 animate-float-sm" style={{ animationDelay: `${i * 0.2}s` }}>
+                    <div className="absolute inset-0 rounded-2xl bg-neon-blue/30 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    {s.image ? (
+                      <div className="relative w-14 h-14 bg-white rounded-2xl flex items-center justify-center p-2 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">
+                        <img src={s.image} alt={s.name} loading="lazy" decoding="async" width="36" height="36" className="w-9 h-9 object-contain" onError={(e) => { e.currentTarget.parentElement.style.display = 'none' }} />
+                      </div>
+                    ) : (
+                      <div className="relative w-14 h-14 rounded-2xl text-neon-blue flex items-center justify-center border border-neon-blue/30">
+                        <Icon size={24} />
+                      </div>
+                    )}
                   </div>
-                  {s.image ? (
-                    <div className={`w-16 h-16 mb-4 bg-white rounded-full flex items-center justify-center p-2 transition-transform duration-300 ${showName ? 'opacity-0' : 'group-hover:scale-110'}`}>
-                      <img src={s.image} alt={s.name} loading="lazy" className="w-10 h-10 object-contain" onError={(e) => { e.currentTarget.parentElement.style.display = 'none' }} />
-                    </div>
-                  ) : (
-                    <div className="w-12 h-12 mb-4 text-neon-blue flex items-center justify-center">
-                      <Icon size={24} className="group-hover:scale-110 transition-transform" />
-                    </div>
-                  )}
-                  <div
-                    className={`absolute inset-0 flex items-center justify-center bg-tech-dark/90 backdrop-blur-sm transition-opacity duration-300 ${
-                      showName ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
-                    }`}
-                  >
-                    <span className="font-exo font-semibold text-white text-sm md:text-base px-3 text-center">
-                      {s.name}
-                    </span>
-                  </div>
-                </div>
+                  <span className={`relative font-exo font-semibold text-sm md:text-[0.95rem] leading-tight transition-colors duration-300 ${showName ? 'text-neon-blue' : 'text-white/85 group-hover:text-white'}`}>
+                    {s.name}
+                  </span>
+                </SpotlightCard>
               </motion.div>
             )
           })}
         </motion.div>
 
-        <div className="flex flex-wrap justify-center gap-8 md:gap-16">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 max-w-4xl mx-auto">
           {PROFILE.stats.map((s, i) => (
             <motion.div
               key={s.label}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.2 + i * 0.2, duration: 0.6 }}
-              className="stats-counter text-center"
+              transition={{ delay: 0.1 + i * 0.15, duration: 0.6 }}
             >
-              <div className="text-neon-blue font-exo text-4xl md:text-5xl font-bold mb-2">
-                <Counter target={s.value} suffix={s.suffix} duration={i === 1 ? 2000 : 1000 + i * 500} />
-              </div>
-              <p className="text-light-gray font-medium">{s.label}</p>
+              <SpotlightCard className="border-spin rounded-2xl glass p-8 text-center">
+                <div className="relative text-white font-exo text-4xl md:text-5xl font-bold mb-2">
+                  <Counter target={s.value} suffix={s.suffix} duration={1800 + i * 300} />
+                </div>
+                <p className="relative text-light-gray font-medium text-sm tracking-wide uppercase">{s.label}</p>
+              </SpotlightCard>
             </motion.div>
           ))}
         </div>
