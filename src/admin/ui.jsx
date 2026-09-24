@@ -49,16 +49,30 @@ export function Card({ children, className = '' }) {
   return <div className={`glass rounded-2xl ${className}`}>{children}</div>
 }
 
-// Uploads a file to the public "media" bucket and returns its URL
-export async function uploadImage(file, folder = 'uploads') {
-  const ext = file.name.split('.').pop()
-  const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
+// SEO-friendly file name: "AI Dost: Voice Chat!" -> "ai-dost-voice-chat"
+const slugify = (s) =>
+  s
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 60)
+    .replace(/-+$/, '')
+
+// Uploads a file to the public "media" bucket and returns its URL.
+// The stored name describes the image (from nameHint, else the original file name) plus a short
+// random suffix so two uploads never collide, e.g. posts/building-ai-dost-cover-x7k2.webp
+export async function uploadImage(file, folder = 'uploads', nameHint = '') {
+  const ext = (file.name.split('.').pop() || 'jpg').toLowerCase()
+  const base = slugify(nameHint) || slugify(file.name.replace(/\.[^.]+$/, '')) || 'image'
+  const path = `${folder}/${base}-${Math.random().toString(36).slice(2, 6)}.${ext}`
   const { error } = await supabase.storage.from('media').upload(path, file, { cacheControl: '31536000', upsert: false })
   if (error) throw error
   return supabase.storage.from('media').getPublicUrl(path).data.publicUrl
 }
 
-export function ImageInput({ value, onChange, folder }) {
+export function ImageInput({ value, onChange, folder, nameHint }) {
   const fileRef = useRef(null)
   const [busy, setBusy] = useState(false)
   const toast = useToast()
@@ -68,7 +82,7 @@ export function ImageInput({ value, onChange, folder }) {
     if (!file) return
     setBusy(true)
     try {
-      onChange(await uploadImage(file, folder))
+      onChange(await uploadImage(file, folder, nameHint))
       toast('Image uploaded')
     } catch (err) {
       toast(err.message, 'error')

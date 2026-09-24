@@ -7,11 +7,11 @@ const assetsDir = join(__dirname, '..', 'public', 'assets')
 mkdirSync(assetsDir, { recursive: true })
 
 const projects = [
-  { name: 'AI Dost', slug: 'aidost', accent: '#00f6ff', emoji: '\u{1F916}' },
-  { name: 'Ozy Sneakers', slug: 'ozy', accent: '#b026ff', emoji: '\u{1F9E6}' },
-  { name: 'IQ World', slug: 'iqworld', accent: '#22c55e', emoji: '\u{1F9E0}' },
-  { name: 'AI Caption Generator', slug: 'caption', accent: '#f97316', emoji: '\u{1F3A5}' },
-  { name: 'Universal Downloader', slug: 'downloader', accent: '#38bdf8', emoji: '\u{2B07}\uFE0F' },
+  { name: 'AI Dost', slug: 'ai-dost-voice-ai-friend', accent: '#00f6ff', emoji: '\u{1F916}' },
+  { name: 'Ozy Sneakers', slug: 'ozy-sneakers-ai-ecommerce-store', accent: '#b026ff', emoji: '\u{1F9E6}' },
+  { name: 'IQ World', slug: 'iq-world-sentence-brain-game', accent: '#22c55e', emoji: '\u{1F9E0}' },
+  { name: 'AI Caption Generator', slug: 'ai-video-caption-generator', accent: '#f97316', emoji: '\u{1F3A5}' },
+  { name: 'Universal Downloader', slug: 'universal-video-downloader', accent: '#38bdf8', emoji: '\u{2B07}\uFE0F' },
 ]
 
 const slides = ['Overview', 'Interface', 'Features', 'Live Demo']
@@ -42,9 +42,9 @@ const svg = (title, label, accent, emoji) => `<?xml version="1.0" encoding="UTF-
 </svg>`
 
 for (const p of projects) {
-  writeFileSync(join(assetsDir, `${p.slug}-main.svg`), svg(p.name, 'Main Screenshot', p.accent))
+  writeFileSync(join(assetsDir, `${p.slug}-cover.svg`), svg(p.name, 'Main Screenshot', p.accent))
   slides.forEach((label, i) => {
-    writeFileSync(join(assetsDir, `${p.slug}-${i + 1}.svg`), svg(p.name, `${label}`, p.accent))
+    writeFileSync(join(assetsDir, `${p.slug}-screenshot-${i + 1}.svg`), svg(p.name, `${label}`, p.accent))
   })
 }
 

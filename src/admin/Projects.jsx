@@ -187,7 +187,7 @@ function ProjectEditor({ id }) {
         <div className="space-y-6">
           <Card className="p-6">
             <p className="text-xs font-semibold tracking-wider uppercase text-gray-400 mb-3">Screenshots</p>
-            <ListInput value={project.images} onChange={(v) => set('images', v)} render={(item, update) => <ImageInput value={item} onChange={update} folder="projects" />} />
+            <ListInput value={project.images} onChange={(v) => set('images', v)} render={(item, update) => <ImageInput value={item} onChange={update} folder="projects" nameHint={project.title && `${project.title} screenshot`} />} />
           </Card>
           <Card className="p-6">
             <p className="text-xs font-semibold tracking-wider uppercase text-gray-400 mb-3">Key features</p>

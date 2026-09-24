@@ -266,7 +266,7 @@ function PostEditor({ id }) {
           </Card>
           <Card className="p-6">
             <Field label="Cover image">
-              <ImageInput value={post.cover} onChange={(v) => set('cover', v)} folder="posts" />
+              <ImageInput value={post.cover} onChange={(v) => set('cover', v)} folder="posts" nameHint={post.title && `${post.title} cover`} />
             </Field>
           </Card>
         </div>

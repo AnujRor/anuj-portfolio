@@ -6,8 +6,8 @@ export const PROFILE = {
   dreamer: '19-year-old Dreamer & Builder',
   from: 'from Harsola, Haryana',
   location: 'Harsola, Kaithal, Haryana, India',
-  photo: '/assets/profile-hero.webp',
-  aboutPhoto: '/assets/profile-about.webp',
+  photo: '/assets/anuj-ai-entrepreneur.webp',
+  aboutPhoto: '/assets/anuj-ai-builder-harsola-haryana.webp',
   about: {
     paragraphs: [
       'Growing up in a small village in Haryana, a place where the idea of building artificial intelligence felt like a distant dream. But even as a kid, I never thought like the people around me. While others talked about jobs and safety, I dreamt about creating something the world had never seen.',
@@ -73,8 +73,8 @@ AI Dost is more than an assistant — it's a friend who is always there for you.
 It talks, listens, understands, and helps you with almost anything — just like a real friend.
 Built with the latest AI voice and language models, it learns your preferences and behaves naturally.
 Next, every model will be custom-trained to deliver ultra-realistic, empathetic interactions.`,
-    mainImage: '/assets/aidost-main.svg',
-    images: ['/assets/aidost-1.svg', '/assets/aidost-2.svg', '/assets/aidost-3.svg', '/assets/aidost-4.svg'],
+    mainImage: '/assets/ai-dost-voice-ai-friend-cover.svg',
+    images: ['/assets/ai-dost-voice-ai-friend-screenshot-1.svg', '/assets/ai-dost-voice-ai-friend-screenshot-2.svg', '/assets/ai-dost-voice-ai-friend-screenshot-3.svg', '/assets/ai-dost-voice-ai-friend-screenshot-4.svg'],
     tag: 'Flagship',
     tagColor: 'neon-blue',
     techStack: [
@@ -100,8 +100,8 @@ Next, every model will be custom-trained to deliver ultra-realistic, empathetic 
 Ozy Sneakers is a full e-commerce website built to make sneaker shopping effortless.
 Browse the latest kicks, get AI-powered style suggestions, and complete secure one-click checkouts.
 From hot drops to classic fits, Ozy Sneakers brings the sneaker culture to your doorstep.`,
-    mainImage: '/assets/ozy-main.svg',
-    images: ['/assets/ozy-1.svg', '/assets/ozy-2.svg', '/assets/ozy-3.svg', '/assets/ozy-4.svg'],
+    mainImage: '/assets/ozy-sneakers-ai-ecommerce-store-cover.svg',
+    images: ['/assets/ozy-sneakers-ai-ecommerce-store-screenshot-1.svg', '/assets/ozy-sneakers-ai-ecommerce-store-screenshot-2.svg', '/assets/ozy-sneakers-ai-ecommerce-store-screenshot-3.svg', '/assets/ozy-sneakers-ai-ecommerce-store-screenshot-4.svg'],
     tag: 'E-Commerce',
     tagColor: 'purple-500',
     techStack: [
@@ -127,8 +127,8 @@ From hot drops to classic fits, Ozy Sneakers brings the sneaker culture to your 
 IQ World challenges your brain: choose the correct words from a mix and arrange them into meaningful sentences.
 Each level adds new puzzles, faster timers, and smarter scoring, keeping your mind sharp while you play.
 Built with a custom game engine for smooth, addictive gameplay.`,
-    mainImage: '/assets/iqworld-main.svg',
-    images: ['/assets/iqworld-1.svg', '/assets/iqworld-2.svg', '/assets/iqworld-3.svg', '/assets/iqworld-4.svg'],
+    mainImage: '/assets/iq-world-sentence-brain-game-cover.svg',
+    images: ['/assets/iq-world-sentence-brain-game-screenshot-1.svg', '/assets/iq-world-sentence-brain-game-screenshot-2.svg', '/assets/iq-world-sentence-brain-game-screenshot-3.svg', '/assets/iq-world-sentence-brain-game-screenshot-4.svg'],
     tag: 'Gaming',
     tagColor: 'green-500',
     techStack: [
@@ -154,8 +154,8 @@ Built with a custom game engine for smooth, addictive gameplay.`,
 AI Caption Generator transforms any video into a fully captioned masterpiece.
 Upload any video and our AI instantly understands the speech, adds accurate subtitles, and styles them beautifully.
 Perfect for reels, shorts, tutorials, and YouTube — captions in seconds, not hours.`,
-    mainImage: '/assets/caption-main.svg',
-    images: ['/assets/caption-1.svg', '/assets/caption-2.svg', '/assets/caption-3.svg', '/assets/caption-4.svg'],
+    mainImage: '/assets/ai-video-caption-generator-cover.svg',
+    images: ['/assets/ai-video-caption-generator-screenshot-1.svg', '/assets/ai-video-caption-generator-screenshot-2.svg', '/assets/ai-video-caption-generator-screenshot-3.svg', '/assets/ai-video-caption-generator-screenshot-4.svg'],
     tag: 'Creativity',
     tagColor: 'orange-500',
     techStack: [
@@ -181,8 +181,8 @@ Perfect for reels, shorts, tutorials, and YouTube — captions in seconds, not h
 Universal Downloader is the all-in-one video downloader — paste any link and grab your video instantly.
 Supports hundreds of platforms with multiple quality options, from HD to audio-only.`
       .trim(),
-    mainImage: '/assets/downloader-main.svg',
-    images: ['/assets/downloader-1.svg', '/assets/downloader-2.svg', '/assets/downloader-3.svg', '/assets/downloader-4.svg'],
+    mainImage: '/assets/universal-video-downloader-cover.svg',
+    images: ['/assets/universal-video-downloader-screenshot-1.svg', '/assets/universal-video-downloader-screenshot-2.svg', '/assets/universal-video-downloader-screenshot-3.svg', '/assets/universal-video-downloader-screenshot-4.svg'],
     tag: 'Utility',
     tagColor: 'sky-500',
     techStack: [
@@ -211,7 +211,7 @@ export const BLOG_POSTS = [
     date: '2026-09-10',
     readTime: '5 min read',
     category: 'Journey',
-    cover: '/assets/profile-hero.png',
+    cover: '/assets/anuj-ai-entrepreneur.webp',
     content: [
       'Growing up in Harsola, a small village in Haryana, building artificial intelligence felt like something that only happened in big cities and bigger companies. But I never stopped asking one question: why not me?',
       { h: 'The first spark' },
@@ -229,7 +229,7 @@ export const BLOG_POSTS = [
     date: '2026-08-22',
     readTime: '6 min read',
     category: 'Projects',
-    cover: '/assets/aidost-main.svg',
+    cover: '/assets/ai-dost-voice-ai-friend-cover.svg',
     content: [
       'AI Dost started with a simple idea: what if technology didn\'t just work for you, but stayed by your side like a friend?',
       { h: 'Why voice?' },
@@ -247,7 +247,7 @@ export const BLOG_POSTS = [
     date: '2026-07-30',
     readTime: '4 min read',
     category: 'Tech',
-    cover: '/assets/caption-main.svg',
+    cover: '/assets/ai-video-caption-generator-cover.svg',
     content: [
       'Building a voice assistant that feels natural is much harder than it looks. Here are the biggest lessons I\'ve learned so far.',
       { h: '1. Latency is everything' },

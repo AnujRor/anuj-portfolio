@@ -45,7 +45,7 @@ export const projectFromRow = (r) => ({
   tag: r.tag,
   description: r.description,
   longDescription: r.long_description,
-  images: r.images?.length ? r.images : ['/assets/profile.svg'],
+  images: r.images?.length ? r.images : ['/assets/portfolio-placeholder.svg'],
   features: r.features || [],
   techStack: r.tech_stack || [],
   demoLink: r.demo_link || '#',
