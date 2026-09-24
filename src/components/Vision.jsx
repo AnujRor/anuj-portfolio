@@ -14,7 +14,7 @@ export default function Vision() {
   }
 
   return (
-    <section id="vision" className="min-h-screen flex items-center justify-center relative py-28 overflow-hidden">
+    <section id="vision" className="cv-auto min-h-screen flex items-center justify-center relative py-28 overflow-hidden">
       <div className="absolute inset-0 overflow-hidden bg-[radial-gradient(ellipse_at_center,rgba(0,246,255,0.06),rgba(5,8,12,0.7)_70%)]">
         <div className="absolute inset-0 circuit-pattern opacity-10 animate-circuit-glow" />
         <div className="absolute inset-0 bg-radial-gradient" />

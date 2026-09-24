@@ -63,7 +63,7 @@ export default function Skills() {
   const [active, setActive] = useState(null)
 
   return (
-    <section id="skills" className="py-28 relative">
+    <section id="skills" className="cv-auto py-28 relative">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
         <SectionTitle index="02" eyebrow="Toolkit" accent="Capabilities">
           My

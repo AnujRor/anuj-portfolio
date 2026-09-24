@@ -346,6 +346,28 @@
 .animate-spin-slow { animation: spin 8s linear infinite; }
 .animate-spin-reverse { animation: spin 30s linear infinite reverse; }
 
+/* Off-screen sections skip layout & paint until they are scrolled near */
+.cv-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 1000px;
+}
+
+/* Phones: drop the most expensive-to-paint decorations (large blurs, full-screen grain animation) */
+@media (max-width: 767px), (pointer: coarse) {
+  .aurora {
+    display: none;
+  }
+  .grain::after {
+    animation: none;
+  }
+  /* These animate paint-only properties (background-position, a custom property),
+     so every frame is a main-thread repaint — keep them static on phones */
+  .text-shine,
+  .border-spin::before {
+    animation: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.001ms !important;

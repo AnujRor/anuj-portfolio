@@ -12,7 +12,7 @@ const LINKS = [
   { name: 'CONTACT', href: '/#contact' },
 ]
 
-export default function Navbar({ path = '/' }) {
+export default function Navbar({ path = '/', sectionsReady = true }) {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
   const [section, setSection] = useState('')
@@ -42,20 +42,20 @@ export default function Navbar({ path = '/' }) {
       if (el) observer.observe(el)
     })
     return () => observer.disconnect()
-  }, [isBlog])
+  }, [isBlog, sectionsReady])
 
   const active = isBlog ? '/blog' : section
   const highlight = hovered ?? active
 
   return (
-    <motion.nav
+    <motion.header
       initial={{ opacity: 0, y: -30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.7, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-      aria-label="Main navigation"
       className="fixed top-0 inset-x-0 z-50 flex justify-center px-4"
     >
-      <div
+      <nav
+        aria-label="Main navigation"
         className={`w-full transition-all duration-500 ${
           scrolled || open ? 'max-w-4xl mt-4 rounded-2xl glass shadow-[0_8px_40px_rgba(0,0,0,0.45)] px-5' : 'max-w-7xl mt-0 px-4 sm:px-6 lg:px-8 border border-transparent'
         }`}
@@ -126,7 +126,7 @@ export default function Navbar({ path = '/' }) {
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
-    </motion.nav>
+      </nav>
+    </motion.header>
   )
 }

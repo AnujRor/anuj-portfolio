@@ -14,7 +14,7 @@ export default function About() {
   const { scrollYProgress } = useScroll({ target: timelineRef, offset: ['start 80%', 'end 60%'] })
 
   return (
-    <section id="about" className="py-28 relative overflow-hidden">
+    <section id="about" className="cv-auto py-28 relative overflow-hidden">
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <SectionTitle index="01" eyebrow="Who I am" accent="Me">

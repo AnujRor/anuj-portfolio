@@ -13,7 +13,7 @@ export default function Projects() {
   const set = (id, index) => setActive((prev) => ({ ...prev, [id]: index }))
 
   return (
-    <section id="projects" className="py-28 relative">
+    <section id="projects" className="cv-auto py-28 relative">
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <SectionTitle index="03" eyebrow="Selected Work" accent="AI Innovations">

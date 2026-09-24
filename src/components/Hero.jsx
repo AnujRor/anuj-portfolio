@@ -148,8 +148,9 @@ export default function Hero({ ready = true }) {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.8, filter: 'blur(12px)' }}
-            animate={ready ? { opacity: 1, scale: 1, filter: 'blur(0px)' } : {}}
+            // Photo is the LCP element: visible from the first frame, only a gentle zoom-in
+            initial={{ scale: 0.92 }}
+            animate={ready ? { scale: 1 } : {}}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             style={{ x: px, y: py }}
             className="w-full lg:w-1/2 flex justify-center items-center"

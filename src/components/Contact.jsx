@@ -71,7 +71,7 @@ export default function Contact() {
   )
 
   return (
-    <section id="contact" className="py-24 relative overflow-hidden">
+    <section id="contact" className="cv-auto py-24 relative overflow-hidden">
       <div className="absolute inset-0">
         <div className="absolute inset-0 opacity-5">
           <div className="h-full w-full bg-[linear-gradient(to_right,#0d1117_1px,transparent_1px),linear-gradient(to_bottom,#0d1117_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_50%,#000_70%,transparent_100%)]" />

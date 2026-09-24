@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect, useState } from 'react'
+import { Suspense, lazy, startTransition, useEffect, useState } from 'react'
 import { AnimatePresence, MotionConfig, motion, useScroll, useSpring } from 'framer-motion'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
@@ -33,9 +33,11 @@ export default function App() {
   const path = usePath()
   const isBlog = path.startsWith('/blog')
   const isAdmin = path.startsWith('/admin')
-  // Intro loader only on the first home-page visit of a session, so it never delays blog pages or repeat views
+  // Intro loader only on the first desktop home-page visit of a session, so it never delays
+  // mobile users (slow CPUs), blog pages or repeat views
   const [loading, setLoading] = useState(() => {
     if (isAdmin || isBlog) return false
+    if (window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 768) return false
     try {
       return !sessionStorage.getItem('intro-seen')
     } catch {
@@ -53,6 +55,19 @@ export default function App() {
     }, 1200)
     return () => clearTimeout(t)
   }, [])
+
+  // Hero renders first; the sections below it render as a low-priority transition, which React
+  // splits into small chunks instead of one long main-thread task
+  const [showRest, setShowRest] = useState(false)
+  useEffect(() => {
+    startTransition(() => setShowRest(true))
+  }, [])
+
+  // Opening /#projects directly: scroll once the lower sections exist
+  useEffect(() => {
+    if (!showRest || isBlog || !window.location.hash) return
+    requestAnimationFrame(() => document.getElementById(window.location.hash.slice(1))?.scrollIntoView())
+  }, [showRest])
 
   useRouteSeo({ path: '/' }, !isBlog && !isAdmin)
 
@@ -73,18 +88,22 @@ export default function App() {
         <Background />
         <ScrollProgress />
         <CustomCursor />
-        <Navbar path={path} />
+        <Navbar path={path} sectionsReady={showRest} />
         <main className="relative z-10 min-h-screen">
           {isBlog ? (
             <Blog path={path} />
           ) : (
             <>
               <Hero ready={!loading} />
-              <About />
-              <Skills />
-              <Projects />
-              <Vision />
-              <Contact />
+              {showRest && (
+                <>
+                  <About />
+                  <Skills />
+                  <Projects />
+                  <Vision />
+                  <Contact />
+                </>
+              )}
             </>
           )}
         </main>
