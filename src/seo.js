@@ -62,7 +62,7 @@ export function applySeo({ title, description = SITE.defaultDescription, path = 
 
 /** Route-level SEO: pass the same shape routeSeo() accepts ({ path, posts, post, notFound }) */
 export function useRouteSeo(input, enabled = true) {
-  const key = JSON.stringify([input.path, input.post?.slug, input.post?.updatedAt, input.posts?.length, input.notFound, enabled])
+  const key = JSON.stringify([input.path, input.post?.slug, input.post?.updatedAt, input.posts?.length, input.projects?.length, input.notFound, enabled])
   useEffect(() => {
     if (enabled) applySeo(routeSeo(SITE_URL, input))
   }, [key])

@@ -17,8 +17,10 @@ export default function CustomCursor() {
 
   useEffect(() => {
     const m = window.matchMedia('(hover: hover) and (pointer: fine)')
-    setSupported(m.matches)
-    const change = (e) => setSupported(e.matches)
+    // Off in lite mode (low-end devices): the spring-animated cursor runs every frame
+    const lite = document.documentElement.classList.contains('perf-lite')
+    setSupported(m.matches && !lite)
+    const change = (e) => setSupported(e.matches && !lite)
     m.addEventListener('change', change)
     return () => m.removeEventListener('change', change)
   }, [])

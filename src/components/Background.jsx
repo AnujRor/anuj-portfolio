@@ -12,7 +12,8 @@ export default function Background() {
   useEffect(() => {
     const canvas = canvasRef.current
     const ctx = canvas.getContext('2d')
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    // Lite mode (low-end device, set in index.html) and reduced motion get one static frame only
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches || document.documentElement.classList.contains('perf-lite')
     const light = window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 768 || navigator.connection?.saveData
     const GAP = light ? 38 : 30
     const FRAME_MS = light ? 1000 / 20 : 1000 / 30
@@ -129,7 +130,7 @@ export default function Background() {
     }
 
     const start = () => {
-      if (running || reduce || document.hidden) return
+      if (running || reduce || document.hidden || scrolling) return
       running = true
       raf = requestAnimationFrame(draw)
     }
@@ -148,6 +149,20 @@ export default function Background() {
     }
     const onVisibility = () => (document.hidden ? stop() : start())
 
+    // Freeze the animation while the page scrolls: the glass cards above the canvas would otherwise
+    // re-blur the moving dots on every frame, which is what makes scrolling stutter
+    let scrollTimer
+    let scrolling = false
+    const onScroll = () => {
+      if (!scrolling && running) stop()
+      scrolling = true
+      clearTimeout(scrollTimer)
+      scrollTimer = setTimeout(() => {
+        scrolling = false
+        start()
+      }, 200)
+    }
+
     resize() // paints one static frame immediately
     // Start animating only after the page has loaded, so it never competes with first paint
     let startTimer
@@ -157,11 +172,14 @@ export default function Background() {
 
     window.addEventListener('resize', resize)
     window.addEventListener('mousemove', onMove, { passive: true })
+    window.addEventListener('scroll', onScroll, { passive: true })
     document.addEventListener('mouseleave', onLeave)
     document.addEventListener('visibilitychange', onVisibility)
     return () => {
       stop()
       clearTimeout(startTimer)
+      clearTimeout(scrollTimer)
+      window.removeEventListener('scroll', onScroll)
       window.removeEventListener('load', scheduleStart)
       window.removeEventListener('resize', resize)
       window.removeEventListener('mousemove', onMove)

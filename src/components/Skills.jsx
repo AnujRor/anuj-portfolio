@@ -57,15 +57,15 @@ function Counter({ target, suffix, duration }) {
 export default function Skills() {
   const container = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.07 } } }
   const item = {
-    hidden: { opacity: 0, y: 30, scale: 0.9, filter: 'blur(6px)' },
-    visible: { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)', transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+    hidden: { opacity: 0, y: 30, scale: 0.95 },
+    visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
   }
   const [active, setActive] = useState(null)
 
   return (
     <section id="skills" className="cv-auto py-28 relative">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
-        <SectionTitle index="02" eyebrow="Toolkit" accent="Capabilities">
+        <SectionTitle index="02" eyebrow="AI Tools & Tech Stack" accent="Capabilities">
           My
         </SectionTitle>
 

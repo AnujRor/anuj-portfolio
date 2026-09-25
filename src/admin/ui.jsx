@@ -60,10 +60,33 @@ const slugify = (s) =>
     .slice(0, 60)
     .replace(/-+$/, '')
 
+// Photos (JPG/PNG/...) are converted to WebP in the browser and scaled down to at most 1600px wide,
+// so every uploaded image is small and fast. SVGs, GIFs and WebPs are uploaded as they are.
+const MAX_WIDTH = 1600
+async function toWebp(file) {
+  if (!/^image\/(jpeg|png|bmp|avif)$/.test(file.type)) return file
+  try {
+    const bitmap = await createImageBitmap(file)
+    const scale = Math.min(1, MAX_WIDTH / bitmap.width)
+    const canvas = document.createElement('canvas')
+    canvas.width = Math.round(bitmap.width * scale)
+    canvas.height = Math.round(bitmap.height * scale)
+    canvas.getContext('2d').drawImage(bitmap, 0, 0, canvas.width, canvas.height)
+    bitmap.close()
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/webp', 0.85))
+    // Keep the original if the browser can't encode WebP or the result isn't smaller
+    if (!blob || blob.type !== 'image/webp' || blob.size >= file.size) return file
+    return new File([blob], file.name.replace(/\.[^.]+$/, '') + '.webp', { type: 'image/webp' })
+  } catch {
+    return file
+  }
+}
+
 // Uploads a file to the public "media" bucket and returns its URL.
 // The stored name describes the image (from nameHint, else the original file name) plus a short
 // random suffix so two uploads never collide, e.g. posts/building-ai-dost-cover-x7k2.webp
-export async function uploadImage(file, folder = 'uploads', nameHint = '') {
+export async function uploadImage(original, folder = 'uploads', nameHint = '') {
+  const file = await toWebp(original)
   const ext = (file.name.split('.').pop() || 'jpg').toLowerCase()
   const base = slugify(nameHint) || slugify(file.name.replace(/\.[^.]+$/, '')) || 'image'
   const path = `${folder}/${base}-${Math.random().toString(36).slice(2, 6)}.${ext}`

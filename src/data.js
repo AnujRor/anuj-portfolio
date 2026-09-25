@@ -1,5 +1,6 @@
 export const PROFILE = {
   name: 'Anuj',
+  fullName: 'Anuj Ror',
   title: 'Anuj | AI Entrepreneur',
   heroType: 'I am Anuj',
   headline: 'The intelligence behind tomorrow\'s world',

@@ -103,7 +103,7 @@ export default function Hero({ ready = true }) {
             </motion.div>
 
             {/* Full heading for search engines & screen readers; the typing effect below is visual only */}
-            <h1 className="sr-only">{PROFILE.name} — AI Entrepreneur &amp; Voice AI Builder from Haryana, India</h1>
+            <h1 className="sr-only">{PROFILE.fullName} — AI Developer &amp; Voice AI Builder from Haryana, India</h1>
             <motion.div
               aria-hidden="true"
               variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
@@ -168,7 +168,7 @@ export default function Hero({ ready = true }) {
 
               <img
                 src={PROFILE.photo}
-                alt={`${PROFILE.name}, AI entrepreneur and voice AI builder`}
+                alt={`${PROFILE.fullName}, AI developer and voice AI builder from India`}
                 width="640"
                 height="640"
                 fetchpriority="high"

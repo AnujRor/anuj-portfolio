@@ -84,7 +84,7 @@ export default function Contact() {
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <SectionTitle index="05" eyebrow="Get in touch" accent="Future Together" className="!mb-6">
+        <SectionTitle index="05" eyebrow="Hire an AI Developer" accent="Future Together" className="!mb-6">
           Let's Build the
         </SectionTitle>
 

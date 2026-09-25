@@ -101,7 +101,7 @@ function BlogFooter() {
       </div>
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 relative py-5 border-t border-white/10 font-ui text-xs text-slate-400 flex flex-col sm:flex-row gap-2 justify-between">
         <p>
-          © {year} {PROFILE.name}. All rights reserved.
+          © {year} {PROFILE.fullName}. All rights reserved.
         </p>
         <p>{PROFILE.location}</p>
       </div>

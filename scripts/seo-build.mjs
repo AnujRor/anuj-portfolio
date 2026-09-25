@@ -51,7 +51,7 @@ async function loadContent() {
         date: r.published_at,
         updatedAt: r.updated_at?.slice(0, 10),
       })),
-      projects: projectRows.map((r) => ({ title: r.title, tag: r.tag, description: r.description, longDescription: r.long_description })),
+      projects: projectRows.map((r) => ({ title: r.title, tag: r.tag, description: r.description, longDescription: r.long_description, techStack: r.tech_stack || [], demoLink: r.demo_link })),
       source: 'Supabase',
     }
   } catch (err) {
@@ -97,7 +97,7 @@ const postLinks = (posts) =>
 
 function homeBody({ posts, projects }) {
   return wrap(`
-    <h1>${esc(PROFILE.name)} — AI Entrepreneur &amp; Voice AI Builder from Haryana, India</h1>
+    <h1>${esc(PROFILE.fullName)} — AI Developer &amp; Voice AI Builder from Haryana, India</h1>
     <p>${esc(PROFILE.headline)}.</p>
     <h2>About</h2>
     ${PROFILE.about.paragraphs.map((p) => `<p>${esc(p)}</p>`).join('')}
@@ -119,7 +119,7 @@ function postBody(post) {
     <nav><a href="/">Home</a> › <a href="/blog">Blog</a></nav>
     <article>
       <h1>${esc(post.title)}</h1>
-      <p>By ${esc(PROFILE.name)} · <time datetime="${esc(post.date)}">${esc(post.date)}</time> · ${esc(post.readTime || '')}</p>
+      <p>By ${esc(PROFILE.fullName)} · <time datetime="${esc(post.date)}">${esc(post.date)}</time> · ${esc(post.readTime || '')}</p>
       ${blocks}
     </article>`)
 }
@@ -145,7 +145,7 @@ function write(route, html) {
 const content = await loadContent()
 const { posts } = content
 
-write('/', render(routeSeo(SITE_URL, { path: '/' }), homeBody(content)))
+write('/', render(routeSeo(SITE_URL, { path: '/', projects: content.projects }), homeBody(content)))
 write('/blog', render(routeSeo(SITE_URL, { path: '/blog', posts }), blogBody(content)))
 for (const post of posts) {
   const path = `/blog/${post.slug}`

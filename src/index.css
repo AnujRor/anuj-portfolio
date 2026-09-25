@@ -194,24 +194,15 @@
   border-radius: 8px;
 }
 
-/* Film grain over the whole page */
+/* Static film grain over the whole page (no animation, so it costs nothing while scrolling) */
 .grain::after {
   content: '';
   position: fixed;
-  inset: -50%;
+  inset: 0;
   pointer-events: none;
   z-index: 60;
   opacity: 0.05;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  animation: grain 8s steps(10) infinite;
-}
-
-@keyframes grain {
-  0%, 100% { transform: translate(0, 0); }
-  20% { transform: translate(-5%, 5%); }
-  40% { transform: translate(5%, -3%); }
-  60% { transform: translate(-3%, -5%); }
-  80% { transform: translate(3%, 4%); }
 }
 
 /* Soft drifting aurora blobs */
@@ -268,6 +259,15 @@
   animation: spin-angle 5s linear infinite;
   z-index: 5;
   pointer-events: none;
+}
+
+/* Animating --angle repaints the border every frame, so it only spins while hovered;
+   at rest it shows as a static two-colour accent border */
+.border-spin::before {
+  animation-play-state: paused;
+}
+.border-spin:hover::before {
+  animation-play-state: running;
 }
 
 @keyframes spin-angle {
@@ -357,9 +357,6 @@
   .aurora {
     display: none;
   }
-  .grain::after {
-    animation: none;
-  }
   /* These animate paint-only properties (background-position, a custom property),
      so every frame is a main-thread repaint — keep them static on phones */
   .text-shine,
@@ -398,4 +395,31 @@ body.blog-mode ::-webkit-scrollbar-thumb {
   background: linear-gradient(90deg, #00f6ff00, #00f6ff33, #00f6ff4d, #00f6ff33, #00f6ff00);
   background-size: 200% 100%;
   animation: shimmer 4s infinite;
+}
+/* ---------- Lite mode (low-end devices, see the script in index.html) ----------
+   Blurs, glass and looping animations are what make weak CPUs/GPUs stutter, so they are
+   switched off here. Only the portfolio (.grain wrapper) is affected; loaders keep spinning. */
+.perf-lite .aurora,
+.perf-lite .grain::after,
+.perf-lite .animate-sweep {
+  display: none;
+}
+.perf-lite .glass {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: rgba(22, 27, 34, 0.88);
+}
+.perf-lite .grain *,
+.perf-lite .grain *::before,
+.perf-lite .grain *::after {
+  animation: none !important;
+}
+.perf-lite .grain [class*='backdrop-blur'] {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+/* Decorative glow layers use large blur filters, the single most expensive effect on weak devices */
+.perf-lite .grain [class*=' blur-'],
+.perf-lite .grain [class^='blur-'] {
+  display: none;
 }

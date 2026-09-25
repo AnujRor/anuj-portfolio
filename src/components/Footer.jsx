@@ -121,7 +121,7 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="flex flex-col-reverse sm:flex-row items-center justify-between gap-4 py-6 border-t border-white/10">
           <p className="text-gray-500 text-xs sm:text-sm">
-            © {year} {PROFILE.name}. All rights reserved.
+            © {year} {PROFILE.fullName}. All rights reserved.
           </p>
           <div className="flex items-center gap-5">
             <p className="hidden sm:block text-gray-500 text-sm">The Future of Intelligent Innovation</p>

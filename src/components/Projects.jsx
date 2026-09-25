@@ -18,7 +18,7 @@ export default function Projects() {
     <section id="projects" className="cv-auto py-28 relative">
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <SectionTitle index="03" eyebrow="Selected Work" accent="AI Innovations">
+        <SectionTitle index="03" eyebrow="AI & Voice AI Projects" accent="AI Innovations">
           My
         </SectionTitle>
 
@@ -29,8 +29,8 @@ export default function Projects() {
             return (
               <motion.div
                 key={project.id}
-                initial={{ opacity: 0, y: 80, scale: 0.96, filter: 'blur(8px)' }}
-                whileInView={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
+                initial={{ opacity: 0, y: 60 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.15 }}
                 transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
                 className={`flex flex-col ${idx % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'} gap-8 lg:gap-16 items-center`}

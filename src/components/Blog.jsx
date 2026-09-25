@@ -60,12 +60,14 @@ function BlogList({ allPosts }) {
     <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
       <motion.header {...fadeUp} transition={{ duration: 0.6, ease }} className="relative isolate pt-14 pb-10 md:pt-20 md:pb-14 border-b border-rule">
         <div aria-hidden className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 w-[120%] h-80 -z-10 bg-[radial-gradient(ellipse_at_top,#EEF2FF,transparent_65%)]" />
-        <Kicker>The Journal</Kicker>
-        <h1 className="mt-4 font-serif text-4xl sm:text-5xl md:text-6xl font-medium tracking-tight text-ink leading-[1.05] max-w-3xl">
-          Thoughts, lessons <span className="italic text-accent">&amp; ideas</span>
+        <h1>
+          <Kicker>AI &amp; Voice AI Blog by {PROFILE.fullName}</Kicker>
+          <span className="block mt-4 font-serif text-4xl sm:text-5xl md:text-6xl font-medium tracking-tight text-ink leading-[1.05] max-w-3xl">
+            Thoughts, lessons <span className="italic text-accent">&amp; ideas</span>
+          </span>
         </h1>
         <p className="mt-5 max-w-2xl font-serif text-lg md:text-xl leading-relaxed text-ink-soft">
-          Notes from my journey building AI from a small village: projects, experiments and everything I learn along the way.
+          Notes from my journey building AI from a small village in Haryana: voice AI, real-time AI agents, project breakdowns and everything I learn along the way.
         </p>
       </motion.header>
 
@@ -183,9 +185,9 @@ function BlogPost({ post, allPosts }) {
           </motion.p>
         )}
         <motion.div {...fadeUp} transition={{ duration: 0.7, delay: 0.15, ease }} className="mt-8 flex items-center gap-3 py-5 border-y border-rule">
-          <img src={PROFILE.photo} alt={PROFILE.name} width="44" height="44" loading="lazy" decoding="async" className="w-11 h-11 rounded-full object-cover" />
+          <img src={PROFILE.photo} alt={PROFILE.fullName} width="44" height="44" loading="lazy" decoding="async" className="w-11 h-11 rounded-full object-cover" />
           <div>
-            <p className="font-ui text-sm font-semibold text-ink">{PROFILE.name}</p>
+            <p className="font-ui text-sm font-semibold text-ink">{PROFILE.fullName}</p>
             <Meta post={post} />
           </div>
         </motion.div>
@@ -227,7 +229,7 @@ function BlogPost({ post, allPosts }) {
           <img src={PROFILE.photo} alt="" width="56" height="56" loading="lazy" decoding="async" className="w-14 h-14 rounded-full object-cover" />
           <div className="font-ui">
             <p className="text-xs uppercase tracking-[0.18em] text-ink-faint">Written by</p>
-            <p className="text-base font-semibold text-ink">{PROFILE.name}</p>
+            <p className="text-base font-semibold text-ink">{PROFILE.fullName}</p>
             <p className="text-sm text-ink-soft">
               AI entrepreneur from {PROFILE.location.split(',')[0]}.{' '}
               <Link to="/#about" className="text-accent hover:underline underline-offset-4">

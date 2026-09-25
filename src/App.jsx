@@ -14,6 +14,7 @@ import Background from './components/Background'
 import Blog from './components/Blog'
 import { usePath } from './router'
 import { useRouteSeo } from './seo'
+import { useProjects } from './lib/content'
 
 // Admin code is only downloaded when someone opens /admin
 const Admin = lazy(() => import('./admin/Admin'))
@@ -69,7 +70,9 @@ export default function App() {
     requestAnimationFrame(() => document.getElementById(window.location.hash.slice(1))?.scrollIntoView())
   }, [showRest])
 
-  useRouteSeo({ path: '/' }, !isBlog && !isAdmin)
+  // Projects feed the home page's structured data (same cached request the Projects section uses)
+  const { data: projects, loading: projectsLoading } = useProjects()
+  useRouteSeo({ path: '/', projects }, !isBlog && !isAdmin && !projectsLoading)
 
   if (isAdmin) {
     return (
