@@ -1,37 +1,42 @@
 import { useMemo, useState } from 'react'
-import { motion, useScroll, useSpring } from 'framer-motion'
-import { ArrowLeft, ArrowUpRight, Calendar, Clock, Search } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { ArrowLeft, ArrowRight, Search } from 'lucide-react'
 import { PROFILE } from '../data'
 import { usePosts } from '../lib/content'
 import { useRouteSeo } from '../seo'
 import { Link } from '../router'
-import { SectionTitle, SpotlightCard } from './fx'
+import BlogShell from './BlogShell'
 
-const formatDate = (d) => new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+const formatDate = (d) => new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
+const ease = [0.22, 1, 0.36, 1]
+const fadeUp = { initial: { opacity: 0, y: 14 }, animate: { opacity: 1, y: 0 } }
 
-function Meta({ post }) {
+function Meta({ post, className = '' }) {
   return (
-    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-400">
-      <span className="flex items-center gap-1.5">
-        <Calendar className="w-3.5 h-3.5 text-neon-blue" />
-        <time dateTime={post.date}>{formatDate(post.date)}</time>
-      </span>
-      <span className="flex items-center gap-1.5">
-        <Clock className="w-3.5 h-3.5 text-neon-blue" />
-        {post.readTime}
-      </span>
-    </div>
+    <p className={`font-ui text-[13px] text-ink-faint ${className}`}>
+      <time dateTime={post.date}>{formatDate(post.date)}</time>
+      <span className="mx-2" aria-hidden>·</span>
+      {post.readTime}
+    </p>
   )
 }
 
-function Cover({ post, className = '' }) {
+function Kicker({ children }) {
+  return <span className="font-ui text-[11px] font-semibold uppercase tracking-[0.18em] text-accent">{children}</span>
+}
+
+function Cover({ post, className = '', priority }) {
   return (
-    <div className={`relative overflow-hidden bg-tech-dark ${className}`}>
-      <img src={post.cover} alt={post.title} loading="lazy" decoding="async" width="800" height="450" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-      <div className="absolute inset-0 bg-gradient-to-t from-tech-dark via-tech-dark/20 to-transparent" />
-      <span className="absolute top-4 left-4 px-3 py-1 rounded-full glass text-[11px] font-semibold tracking-wider uppercase text-neon-blue">
-        {post.category}
-      </span>
+    <div className={`overflow-hidden rounded-xl bg-paper-deep ${className}`}>
+      <img
+        src={post.cover}
+        alt={post.title}
+        loading={priority ? 'eager' : 'lazy'}
+        decoding="async"
+        width="800"
+        height="450"
+        className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+      />
     </div>
   )
 }
@@ -52,201 +57,213 @@ function BlogList({ allPosts }) {
   const [featured, ...rest] = posts
 
   return (
-    <section className="pt-36 pb-24">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <SectionTitle as="h1" eyebrow="Blog" accent="& Ideas" className="!mb-6">
-          Thoughts, Lessons
-        </SectionTitle>
-        <motion.p
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="text-center text-light-gray max-w-2xl mx-auto mb-12"
-        >
-          Notes from my journey building AI from a small village — projects, experiments and everything I learn along the way.
-        </motion.p>
+    <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+      <motion.header {...fadeUp} transition={{ duration: 0.6, ease }} className="relative isolate pt-14 pb-10 md:pt-20 md:pb-14 border-b border-rule">
+        <div aria-hidden className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 w-[120%] h-80 -z-10 bg-[radial-gradient(ellipse_at_top,#EEF2FF,transparent_65%)]" />
+        <Kicker>The Journal</Kicker>
+        <h1 className="mt-4 font-serif text-4xl sm:text-5xl md:text-6xl font-medium tracking-tight text-ink leading-[1.05] max-w-3xl">
+          Thoughts, lessons <span className="italic text-accent">&amp; ideas</span>
+        </h1>
+        <p className="mt-5 max-w-2xl font-serif text-lg md:text-xl leading-relaxed text-ink-soft">
+          Notes from my journey building AI from a small village: projects, experiments and everything I learn along the way.
+        </p>
+      </motion.header>
 
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="flex flex-col md:flex-row gap-4 items-center justify-between mb-12"
-        >
-          <div className="flex flex-wrap gap-2 justify-center">
-            {categories.map((c) => (
-              <button
-                key={c}
-                onClick={() => setCategory(c)}
-                className={`relative px-4 py-2 rounded-full text-sm font-medium transition-colors ${category === c ? 'text-tech-dark' : 'text-gray-300 hover:text-white glass'}`}
-              >
-                {category === c && (
-                  <motion.span layoutId="blog-cat" className="absolute inset-0 rounded-full bg-neon-blue shadow-glow" transition={{ type: 'spring', stiffness: 380, damping: 30 }} />
-                )}
-                <span className="relative">{c}</span>
-              </button>
-            ))}
-          </div>
-          <label className="relative w-full md:w-72">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search posts..."
-              className="w-full glass rounded-full pl-11 pr-4 py-2.5 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:border-neon-blue/60"
-            />
-          </label>
+      <motion.div
+        {...fadeUp}
+        transition={{ duration: 0.6, delay: 0.1, ease }}
+        className="flex flex-col-reverse md:flex-row md:items-center justify-between gap-4 py-5 border-b border-rule"
+      >
+        <div role="tablist" aria-label="Filter by category" className="flex gap-6 overflow-x-auto font-ui text-sm">
+          {categories.map((c) => (
+            <button
+              key={c}
+              role="tab"
+              aria-selected={category === c}
+              onClick={() => setCategory(c)}
+              className={`relative whitespace-nowrap py-2 transition-colors ${category === c ? 'text-ink font-medium' : 'text-ink-faint hover:text-ink'}`}
+            >
+              {c}
+              {category === c && <motion.span layoutId="blog-tab" className="absolute left-0 right-0 bottom-0 h-[2px] bg-accent" transition={{ type: 'spring', stiffness: 400, damping: 34 }} />}
+            </button>
+          ))}
+        </div>
+        <label className="relative w-full md:w-64">
+          <span className="sr-only">Search articles</span>
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-faint" />
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search articles"
+            className="w-full rounded-lg border border-rule bg-white pl-9 pr-3 py-2 font-ui text-sm text-ink placeholder:text-ink-faint focus:outline-none focus:border-accent/50 focus:ring-2 focus:ring-accent/10"
+          />
+        </label>
+      </motion.div>
+
+      {posts.length === 0 && <p className="py-24 text-center font-serif text-xl text-ink-soft">No articles found. Try a different search.</p>}
+
+      {featured && (
+        <motion.div key={featured.slug} {...fadeUp} transition={{ duration: 0.6, delay: 0.15, ease }} className="py-10 md:py-12">
+          <Link to={`/blog/${featured.slug}`} className="group grid md:grid-cols-[1.25fr_1fr] gap-6 md:gap-10 items-center rounded-2xl bg-white p-3 ring-1 ring-ink/5 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_12px_32px_-12px_rgba(67,56,202,0.18)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_1px_2px_rgba(15,23,42,0.04),0_24px_48px_-16px_rgba(67,56,202,0.3)] md:p-4 md:pr-10">
+            <Cover post={featured} priority className="aspect-[16/10]" />
+            <div>
+              <div className="flex items-center gap-3">
+                <Kicker>{featured.category}</Kicker>
+                <span className="font-ui text-[11px] uppercase tracking-[0.18em] text-ink-faint">Latest</span>
+              </div>
+              <h2 className="mt-3 font-serif text-3xl md:text-4xl font-medium leading-tight tracking-tight text-ink group-hover:underline decoration-1 underline-offset-[6px] decoration-ink/30">
+                {featured.title}
+              </h2>
+              <p className="mt-4 font-serif text-lg leading-relaxed text-ink-soft">{featured.excerpt}</p>
+              <div className="mt-6 flex items-center justify-between">
+                <Meta post={featured} />
+                <span className="inline-flex items-center gap-1.5 font-ui text-sm font-medium text-accent">
+                  Read article <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                </span>
+              </div>
+            </div>
+          </Link>
         </motion.div>
+      )}
 
-        {posts.length === 0 && <p className="text-center text-gray-400 py-20">No posts found. Try a different search.</p>}
-
-        <>
-          {featured && (
-            <motion.div key={featured.slug} layout initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }} className="mb-8">
-              <Link to={`/blog/${featured.slug}`} className="block">
-                <SpotlightCard className="border-spin glass rounded-3xl overflow-hidden grid md:grid-cols-2">
-                  <Cover post={featured} className="h-64 md:h-full min-h-[18rem]" />
-                  <div className="relative p-8 md:p-10 flex flex-col justify-center">
-                    <span className="text-xs font-semibold tracking-[0.25em] text-neon-purple uppercase mb-4">Latest post</span>
-                    <h2 className="font-exo text-2xl md:text-3xl font-bold text-white mb-4 group-hover:text-neon-blue transition-colors">{featured.title}</h2>
-                    <p className="text-light-gray mb-6">{featured.excerpt}</p>
-                    <div className="flex items-center justify-between">
-                      <Meta post={featured} />
-                      <span className="flex w-11 h-11 items-center justify-center rounded-full bg-neon-blue text-tech-dark transition-transform duration-300 group-hover:rotate-45">
-                        <ArrowUpRight className="w-5 h-5" />
-                      </span>
-                    </div>
-                  </div>
-                </SpotlightCard>
+      {rest.length > 0 && (
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12 py-12 md:py-14">
+          {rest.map((post, i) => (
+            <motion.article key={post.slug} {...fadeUp} transition={{ duration: 0.5, delay: 0.2 + i * 0.06, ease }}>
+              <Link to={`/blog/${post.slug}`} className="group block h-full rounded-2xl bg-white p-3 ring-1 ring-ink/5 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_12px_32px_-12px_rgba(67,56,202,0.18)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_1px_2px_rgba(15,23,42,0.04),0_24px_48px_-16px_rgba(67,56,202,0.3)]">
+                <Cover post={post} className="aspect-[16/10]" />
+                <div className="mt-5 px-2 pb-3">
+                  <Kicker>{post.category}</Kicker>
+                  <h2 className="mt-2 font-serif text-2xl font-medium leading-snug tracking-tight text-ink group-hover:underline decoration-1 underline-offset-[5px] decoration-ink/30">
+                    {post.title}
+                  </h2>
+                  <p className="mt-3 font-serif text-[17px] leading-relaxed text-ink-soft line-clamp-3">{post.excerpt}</p>
+                  <Meta post={post} className="mt-4" />
+                </div>
               </Link>
-            </motion.div>
-          )}
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {rest.map((post, i) => (
-              <motion.div key={post.slug} layout initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ duration: 0.5, delay: i * 0.08 }}>
-                <Link to={`/blog/${post.slug}`} className="block h-full">
-                  <SpotlightCard color={i % 2 ? '176, 38, 255' : '0, 246, 255'} className="glass rounded-3xl overflow-hidden h-full flex flex-col transition-transform duration-500 hover:-translate-y-1.5">
-                    <Cover post={post} className="h-48" />
-                    <div className="relative p-6 flex flex-col flex-1">
-                      <h2 className="font-exo text-xl font-bold text-white mb-3 group-hover:text-neon-blue transition-colors">{post.title}</h2>
-                      <p className="text-light-gray text-sm mb-6 flex-1">{post.excerpt}</p>
-                      <div className="flex items-center justify-between">
-                        <Meta post={post} />
-                        <ArrowUpRight className="w-5 h-5 text-neon-blue transition-transform duration-300 group-hover:rotate-45" />
-                      </div>
-                    </div>
-                  </SpotlightCard>
-                </Link>
-              </motion.div>
-            ))}
-          </div>
-        </>
-      </div>
-    </section>
+            </motion.article>
+          ))}
+        </div>
+      )}
+    </div>
   )
 }
 
 function BlogPost({ post, allPosts }) {
-  const { scrollYProgress } = useScroll()
-  const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 25 })
-  const others = allPosts.filter((p) => p.slug !== post.slug).slice(0, 2)
+  const others = allPosts.filter((p) => p.slug !== post.slug).slice(0, 3)
 
   return (
-    <article className="pt-32 pb-24">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
-        <motion.nav aria-label="Breadcrumb" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="mb-10">
-          <ol className="flex flex-wrap items-center gap-2 text-sm text-gray-400">
+    <article className="pb-20">
+      <header className="mx-auto max-w-3xl px-4 sm:px-6 pt-10 md:pt-16">
+        <motion.nav aria-label="Breadcrumb" {...fadeUp} transition={{ duration: 0.5, ease }}>
+          <ol className="flex items-center gap-2 font-ui text-sm text-ink-faint">
             <li>
-              <Link to="/" className="hover:text-neon-blue transition-colors">
-                Home
+              <Link to="/blog" className="group inline-flex items-center gap-1.5 hover:text-ink transition-colors">
+                <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
+                All articles
               </Link>
             </li>
-            <li aria-hidden>›</li>
-            <li>
-              <Link to="/blog" className="group inline-flex items-center gap-1.5 hover:text-neon-blue transition-colors">
-                <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
-                Blog
-              </Link>
-            </li>
-            <li aria-hidden>›</li>
-            <li aria-current="page" className="text-gray-300 truncate max-w-[16rem]">
-              {post.title}
+            <li aria-hidden>/</li>
+            <li aria-current="page" className="text-ink-soft">
+              {post.category}
             </li>
           </ol>
         </motion.nav>
 
-        <motion.span initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="inline-block px-3 py-1 rounded-full border border-neon-blue/30 bg-neon-blue/5 text-neon-blue text-xs font-semibold tracking-[0.2em] uppercase mb-5">
-          {post.category}
-        </motion.span>
         <motion.h1
-          initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
-          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-          transition={{ duration: 0.7, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-          className="font-exo text-3xl md:text-5xl font-bold text-white leading-tight mb-6"
+          {...fadeUp}
+          transition={{ duration: 0.7, delay: 0.05, ease }}
+          className="mt-8 font-serif text-4xl sm:text-5xl md:text-[3.4rem] font-medium leading-[1.1] tracking-tight text-ink"
         >
           {post.title}
         </motion.h1>
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="flex items-center gap-4 mb-10">
-          <img src={PROFILE.photo} alt={PROFILE.name} width="44" height="44" loading="lazy" decoding="async" className="w-11 h-11 rounded-full object-cover border-2 border-neon-blue/60" />
+        {post.excerpt && (
+          <motion.p {...fadeUp} transition={{ duration: 0.7, delay: 0.1, ease }} className="mt-5 font-serif text-xl md:text-2xl leading-relaxed text-ink-soft">
+            {post.excerpt}
+          </motion.p>
+        )}
+        <motion.div {...fadeUp} transition={{ duration: 0.7, delay: 0.15, ease }} className="mt-8 flex items-center gap-3 py-5 border-y border-rule">
+          <img src={PROFILE.photo} alt={PROFILE.name} width="44" height="44" loading="lazy" decoding="async" className="w-11 h-11 rounded-full object-cover" />
           <div>
-            <p className="text-white font-semibold text-sm">{PROFILE.name}</p>
+            <p className="font-ui text-sm font-semibold text-ink">{PROFILE.name}</p>
             <Meta post={post} />
           </div>
         </motion.div>
+      </header>
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.96 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
-          className="border-spin rounded-3xl overflow-hidden mb-12"
-        >
-          <img src={post.cover} alt={post.title} width="1200" height="630" fetchpriority="high" decoding="async" className="w-full max-h-[26rem] object-cover" />
-        </motion.div>
+      <motion.figure
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.2, ease }}
+        className="mx-auto max-w-5xl px-4 sm:px-6 mt-10 md:mt-12"
+      >
+        <img src={post.cover} alt={post.title} width="1200" height="630" fetchpriority="high" decoding="async" className="w-full max-h-[34rem] object-cover rounded-xl bg-paper-deep" />
+      </motion.figure>
 
-        <div className="space-y-6 text-lg leading-relaxed text-light-gray">
-          {post.content.map((block, i) => {
-            const anim = { initial: { opacity: 0, y: 20 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, amount: 0.5 }, transition: { duration: 0.5 } }
-            if (typeof block === 'string') return <motion.p key={i} {...anim}>{block}</motion.p>
-            if (block.h)
-              return (
-                <motion.h2 key={i} {...anim} className="font-exo text-2xl md:text-3xl font-bold text-white pt-6 pl-4 border-l-4 border-neon-blue">
-                  {block.h}
-                </motion.h2>
-              )
-            if (block.quote)
-              return (
-                <motion.blockquote key={i} {...anim} className="glass rounded-2xl p-6 md:p-8 my-8 font-exo text-xl md:text-2xl font-semibold text-white">
-                  <span className="text-shine">“{block.quote}”</span>
-                </motion.blockquote>
-              )
-            return null
-          })}
+      <div className="mx-auto max-w-[42rem] px-4 sm:px-6 mt-12 md:mt-16 font-serif text-[1.2rem] md:text-[1.3rem] leading-[1.75] text-ink/90">
+        {post.content.map((block, i) => {
+          if (typeof block === 'string')
+            return (
+              <p key={i} className={`mb-7 ${i === 0 ? 'first-letter:float-left first-letter:mr-3 first-letter:mt-1 first-letter:text-[4.2rem] first-letter:leading-[0.85] first-letter:font-semibold first-letter:text-accent' : ''}`}>
+                {block}
+              </p>
+            )
+          if (block.h)
+            return (
+              <h2 key={i} className="mt-14 mb-5 font-serif text-[1.75rem] md:text-3xl font-semibold leading-snug tracking-tight text-ink">
+                {block.h}
+              </h2>
+            )
+          if (block.quote)
+            return (
+              <blockquote key={i} className="my-12 rounded-r-xl border-l-[3px] border-accent bg-accent-soft/60 py-6 pr-6 pl-6 md:pl-8 font-serif text-2xl md:text-[1.75rem] italic leading-snug text-ink">
+                “{block.quote}”
+              </blockquote>
+            )
+          return null
+        })}
+
+        <div className="mt-14 pt-8 border-t border-rule flex items-center gap-4">
+          <img src={PROFILE.photo} alt="" width="56" height="56" loading="lazy" decoding="async" className="w-14 h-14 rounded-full object-cover" />
+          <div className="font-ui">
+            <p className="text-xs uppercase tracking-[0.18em] text-ink-faint">Written by</p>
+            <p className="text-base font-semibold text-ink">{PROFILE.name}</p>
+            <p className="text-sm text-ink-soft">
+              AI entrepreneur from {PROFILE.location.split(',')[0]}.{' '}
+              <Link to="/#about" className="text-accent hover:underline underline-offset-4">
+                More about me
+              </Link>
+            </p>
+          </div>
         </div>
+      </div>
 
-        {others.length > 0 && (
-          <div className="mt-20 pt-10 border-t border-white/10">
-            <h3 className="font-exo text-2xl font-bold text-white mb-6">
-              Keep <span className="text-neon-blue">reading</span>
-            </h3>
-            <div className="grid sm:grid-cols-2 gap-5">
+      {others.length > 0 && (
+        <section aria-labelledby="more-heading" className="mt-20 border-t border-rule bg-white/50 backdrop-blur-sm">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-14">
+            <div className="flex items-baseline justify-between mb-8">
+              <h2 id="more-heading" className="font-serif text-3xl font-medium tracking-tight text-ink">
+                Keep reading
+              </h2>
+              <Link to="/blog" className="font-ui text-sm font-medium text-ink-soft hover:text-ink inline-flex items-center gap-1.5">
+                All articles <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {others.map((p) => (
-                <Link key={p.slug} to={`/blog/${p.slug}`} className="block">
-                  <SpotlightCard className="glass rounded-2xl p-6 h-full">
-                    <span className="relative text-[11px] font-semibold tracking-wider uppercase text-neon-blue">{p.category}</span>
-                    <h4 className="relative font-exo text-lg font-bold text-white mt-2 mb-3 group-hover:text-neon-blue transition-colors">{p.title}</h4>
-                    <div className="relative">
-                      <Meta post={p} />
-                    </div>
-                  </SpotlightCard>
+                <Link key={p.slug} to={`/blog/${p.slug}`} className="group block rounded-2xl bg-white p-3 ring-1 ring-ink/5 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_12px_32px_-12px_rgba(67,56,202,0.18)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_1px_2px_rgba(15,23,42,0.04),0_24px_48px_-16px_rgba(67,56,202,0.3)]">
+                  <Cover post={p} className="aspect-[16/10]" />
+                  <div className="mt-4 px-2 pb-3">
+                    <Kicker>{p.category}</Kicker>
+                    <h3 className="mt-2 font-serif text-xl font-medium leading-snug text-ink group-hover:underline decoration-1 underline-offset-4 decoration-ink/30">{p.title}</h3>
+                    <Meta post={p} className="mt-3" />
+                  </div>
                 </Link>
               ))}
             </div>
           </div>
-        )}
-      </div>
-
-      {/* Reading progress on the left edge */}
-      <motion.div style={{ scaleY: progress }} className="hidden lg:block fixed left-6 top-1/4 h-1/2 w-[2px] origin-top bg-gradient-to-b from-neon-blue to-neon-purple rounded-full z-40" />
+        </section>
+      )}
     </article>
   )
 }
@@ -258,30 +275,31 @@ export default function Blog({ path }) {
 
   useRouteSeo({ path: slug ? `/blog/${slug}` : '/blog', posts, post, notFound: Boolean(slug && !post) }, !loading)
 
+  let body
   if (loading) {
-    return (
-      <section className="min-h-[70vh] flex items-center justify-center pt-24">
-        <div className="w-10 h-10 rounded-full border-2 border-neon-blue/20 border-t-neon-blue animate-spin" />
-      </section>
+    body = (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="w-8 h-8 rounded-full border-2 border-rule border-t-accent animate-spin" />
+      </div>
     )
-  }
-
-  if (slug && !post) {
-    return (
-      <section className="min-h-[70vh] flex flex-col items-center justify-center text-center px-4 pt-24">
-        <p className="font-exo text-7xl font-bold text-outline mb-4">404</p>
-        <h1 className="font-exo text-2xl font-bold text-white mb-2">Post not found</h1>
-        <p className="text-light-gray mb-8">This post doesn't exist or may have been moved.</p>
-        <Link to="/blog" className="px-6 py-3 rounded-full bg-neon-blue text-tech-dark font-semibold">
-          Back to blog
+  } else if (slug && !post) {
+    body = (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4">
+        <p className="font-serif text-7xl font-medium text-ink-faint mb-4">404</p>
+        <h1 className="font-serif text-3xl font-medium text-ink mb-2">Article not found</h1>
+        <p className="font-serif text-lg text-ink-soft mb-8">This article doesn't exist or may have been moved.</p>
+        <Link to="/blog" className="rounded-full bg-accent px-6 py-3 font-ui text-sm font-medium text-white hover:bg-accent/90 transition-colors">
+          Back to all articles
         </Link>
-      </section>
+      </div>
+    )
+  } else {
+    body = (
+      <motion.div key={slug || 'list'} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
+        {post ? <BlogPost post={post} allPosts={posts} /> : <BlogList allPosts={posts} />}
+      </motion.div>
     )
   }
 
-  return (
-    <motion.div key={slug || 'list'} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }}>
-      {post ? <BlogPost post={post} allPosts={posts} /> : <BlogList allPosts={posts} />}
-    </motion.div>
-  )
+  return <BlogShell isPost={Boolean(post)}>{body}</BlogShell>
 }

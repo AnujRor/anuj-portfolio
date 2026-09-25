@@ -81,6 +81,15 @@ export default function App() {
     )
   }
 
+  // The blog is its own light editorial site: no portfolio navbar, neon background, cursor or footer
+  if (isBlog) {
+    return (
+      <MotionConfig reducedMotion="user">
+        <Blog path={path} />
+      </MotionConfig>
+    )
+  }
+
   return (
     <MotionConfig reducedMotion="user">
       <AnimatePresence>{loading && <Preloader key="preloader" />}</AnimatePresence>
@@ -90,20 +99,14 @@ export default function App() {
         <CustomCursor />
         <Navbar path={path} sectionsReady={showRest} />
         <main className="relative z-10 min-h-screen">
-          {isBlog ? (
-            <Blog path={path} />
-          ) : (
+          <Hero ready={!loading} />
+          {showRest && (
             <>
-              <Hero ready={!loading} />
-              {showRest && (
-                <>
-                  <About />
-                  <Skills />
-                  <Projects />
-                  <Vision />
-                  <Contact />
-                </>
-              )}
+              <About />
+              <Skills />
+              <Projects />
+              <Vision />
+              <Contact />
             </>
           )}
         </main>

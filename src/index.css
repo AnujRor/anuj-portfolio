@@ -375,6 +375,25 @@
   }
 }
 
+/* ---------- Blog: light editorial theme ---------- */
+body.blog-mode {
+  background: #f7f7fc;
+  color: #0f172a;
+  color-scheme: light;
+}
+body.blog-mode ::selection {
+  background: #e0e7ff;
+  color: #0f172a;
+}
+body.blog-mode::-webkit-scrollbar-track,
+body.blog-mode ::-webkit-scrollbar-track {
+  background: #f7f7fc;
+}
+body.blog-mode::-webkit-scrollbar-thumb,
+body.blog-mode ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+}
+
 .animate-shimmer {
   background: linear-gradient(90deg, #00f6ff00, #00f6ff33, #00f6ff4d, #00f6ff33, #00f6ff00);
   background-size: 200% 100%;

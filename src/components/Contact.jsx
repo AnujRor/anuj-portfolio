@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import emailjs from '@emailjs/browser'
-import { MapPin, Linkedin, Instagram, Twitter, Send } from 'lucide-react'
+import { MapPin, Linkedin, Instagram, Github, Send } from 'lucide-react'
 import { EMAILJS_PUBLIC_KEY, EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, SOCIALS } from '../config'
 import { PROFILE } from '../data'
 import { hasSupabase, supabaseRest } from '../lib/content'
@@ -10,7 +10,7 @@ import { Magnetic, SectionTitle } from './fx'
 const SOCIAL_ICONS = {
   linkedin: Linkedin,
   instagram: Instagram,
-  twitter: Twitter,
+  github: Github,
 }
 
 const inputClass =

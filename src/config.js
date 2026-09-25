@@ -7,9 +7,9 @@ export const EMAILJS_PUBLIC_KEY = 'fHJ26ACz_6uIbndkG'
 export const EMAILJS_SERVICE_ID = 'service_4f7169a'
 export const EMAILJS_TEMPLATE_ID = 'template_362dvcj'
 
-// Social links (baad me apne links daal dena)
+// Social links
 export const SOCIALS = [
-  { href: 'https://www.linkedin.com/in/your-profile', type: 'linkedin' },
-  { href: 'https://www.instagram.com/your-profile', type: 'instagram' },
-  { href: 'https://twitter.com/your-profile', type: 'twitter' },
+  { href: 'https://www.linkedin.com/in/anuj-ror-a533a443a', type: 'linkedin' },
+  { href: 'https://www.instagram.com/anuj_ror_13', type: 'instagram' },
+  { href: 'https://github.com/AnujRor', type: 'github' },
 ]

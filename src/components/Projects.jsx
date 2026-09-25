@@ -4,6 +4,8 @@ import { ChevronLeft, ChevronRight, Camera, ArrowRight } from 'lucide-react'
 import { useProjects } from '../lib/content'
 import { SectionTitle, SpotlightCard, Magnetic } from './fx'
 
+const hasDemo = (project) => /^https?:\/\//.test(project.demoLink || '')
+
 
 export default function Projects() {
   const { data: PROJECTS } = useProjects()
@@ -160,11 +162,14 @@ export default function Projects() {
 
                       <Magnetic strength={0.25}>
                         <a
-                          href={project.demoLink}
+                          // Until a project has a real demo URL, the button leads to the contact form instead of a dead "#"
+                          {...(hasDemo(project)
+                            ? { href: project.demoLink, target: '_blank', rel: 'noopener noreferrer' }
+                            : { href: '#contact' })}
                           className="group relative inline-flex items-center px-6 py-3 bg-neon-blue text-tech-dark rounded-full font-semibold overflow-hidden text-sm md:text-base shadow-[0_0_25px_rgba(0,246,255,0.3)]"
                         >
                           <span className="absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]" />
-                          <span className="relative">View Live Demo</span>
+                          <span className="relative">{hasDemo(project) ? 'View Live Demo' : 'Ask About This Project'}</span>
                           <ArrowRight className="relative w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" />
                         </a>
                       </Magnetic>
