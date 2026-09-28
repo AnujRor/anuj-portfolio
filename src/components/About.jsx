@@ -3,6 +3,7 @@ import { motion, useScroll } from 'framer-motion'
 import { Quote } from 'lucide-react'
 import { PROFILE } from '../data'
 import { SectionTitle, Tilt } from './fx'
+import { useSiteContent } from '../lib/content'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -10,6 +11,7 @@ const fadeUp = {
 }
 
 export default function About() {
+  const { about, journey } = useSiteContent()
   const timelineRef = useRef(null)
   const { scrollYProgress } = useScroll({ target: timelineRef, offset: ['start 80%', 'end 60%'] })
 
@@ -30,16 +32,16 @@ export default function About() {
             className="w-full md:w-2/3"
           >
             <motion.h3 variants={fadeUp} className="text-2xl md:text-3xl font-exo font-bold text-white mb-6">
-              <span className="text-shine">{PROFILE.dreamer}</span> {PROFILE.from}
+              <span className="text-shine">{about.title}</span> {about.from}
             </motion.h3>
-            {PROFILE.about.paragraphs.map((p, i) => (
+            {about.paragraphs.map((p, i) => (
               <motion.p key={i} variants={fadeUp} className="text-light-gray text-lg leading-relaxed mb-6">
                 {p}
               </motion.p>
             ))}
             <motion.p variants={fadeUp} className="text-lg leading-relaxed">
               <span className="bg-gradient-to-r from-neon-blue via-white to-neon-purple text-transparent bg-clip-text text-2xl font-bold">
-                {PROFILE.about.closing}
+                {about.closing}
               </span>
             </motion.p>
           </motion.div>
@@ -57,11 +59,11 @@ export default function About() {
                 <div className="absolute inset-0 bg-neon-purple/20 rounded-[2.5rem] blur-2xl translate-x-3 translate-y-3" />
                 <div className="border-spin relative w-full h-full rounded-[2.5rem] p-[3px] bg-dark-slate">
                   <div className="relative w-full h-full rounded-[2.3rem] overflow-hidden">
-                    <img src={PROFILE.aboutPhoto} alt={`${PROFILE.fullName}, AI developer and entrepreneur from Harsola, Haryana`} width="640" height="640" loading="lazy" decoding="async" className="w-full h-full object-cover transition-transform duration-700 hover:scale-110" />
+                    <img src={about.photo} alt={`${PROFILE.fullName}, AI developer and entrepreneur from Harsola, Haryana`} width="640" height="640" loading="lazy" decoding="async" className="w-full h-full object-cover transition-transform duration-700 hover:scale-110" />
                     <div className="absolute inset-0 bg-gradient-to-t from-tech-dark/70 via-transparent to-transparent" />
                     <div className="absolute bottom-4 left-4 right-4 glass rounded-xl px-4 py-2 text-sm text-white flex items-center gap-2" style={{ transform: 'translateZ(40px)' }}>
                       <span className="w-2 h-2 rounded-full bg-neon-green animate-pulse" />
-                      {PROFILE.location.split(',')[0]}, India
+                      {about.place}
                     </div>
                   </div>
                 </div>
@@ -79,9 +81,9 @@ export default function About() {
         >
           <div className="border-spin p-8 md:p-10 rounded-3xl glass relative overflow-hidden">
             <Quote className="absolute -top-2 right-6 w-28 h-28 text-neon-blue/10 rotate-180" />
-            <h3 className="text-2xl md:text-3xl font-exo font-bold text-white mb-6 pl-6 border-l-4 border-neon-blue">My Story</h3>
+            <h3 className="text-2xl md:text-3xl font-exo font-bold text-white mb-6 pl-6 border-l-4 border-neon-blue">{about.storyTitle}</h3>
             <div className="space-y-6 text-lg relative">
-              {PROFILE.about.story.map((p, i) => (
+              {about.story.map((p, i) => (
                 <motion.p
                   key={i}
                   initial={{ opacity: 0, x: -20 }}
@@ -107,9 +109,9 @@ export default function About() {
               style={{ scaleY: scrollYProgress }}
               className="absolute left-[15px] top-0 bottom-0 w-[2px] origin-top bg-gradient-to-b from-neon-blue to-neon-purple rounded-full shadow-[0_0_12px_rgba(0,246,255,0.8)]"
             />
-            {PROFILE.about.timeline.map((t, i) => (
+            {journey.timeline.map((t, i) => (
               <motion.div
-                key={t.year}
+                key={i}
                 initial={{ opacity: 0, x: -30 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true, amount: 0.6 }}

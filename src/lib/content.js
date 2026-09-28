@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { BLOG_POSTS, PROJECTS } from '../data'
+import { BLOG_POSTS, PROFILE, PROJECTS } from '../data'
 
 // ---------- Post body format ----------
 // Stored as plain text: blank line = new paragraph, "## " = heading, "> " = pull quote.
@@ -169,4 +169,61 @@ export function usePosts() {
 
 export function useProjects() {
   return useRemote('projects', PROJECTS, async () => (await supabaseRest('projects?select=*&published=eq.true&order=sort_order')).map(projectFromRow))
+}
+
+// ---------- Editable site sections (admin "img" page) ----------
+// Each section is one row in site_content (key -> data). Fields saved there override these
+// data.js defaults; anything never saved keeps showing the default.
+
+export const SITE_DEFAULTS = {
+  hero: {
+    badge: 'Building AI that speaks, feels & helps',
+    typed: PROFILE.heroType,
+    headline: PROFILE.headline,
+    photo: PROFILE.photo,
+    chipTitle: 'AI Dost',
+    chipText: 'Live & learning',
+  },
+  about: {
+    title: PROFILE.dreamer,
+    from: PROFILE.from,
+    paragraphs: PROFILE.about.paragraphs,
+    closing: PROFILE.about.closing,
+    photo: PROFILE.aboutPhoto,
+    place: `${PROFILE.location.split(',')[0]}, India`,
+    storyTitle: 'My Story',
+    story: PROFILE.about.story,
+  },
+  capabilities: {
+    skills: PROFILE.skills,
+    stats: PROFILE.stats,
+  },
+  journey: {
+    timeline: PROFILE.about.timeline,
+  },
+}
+
+const mergeSections = (rows = []) => {
+  const out = {}
+  for (const key of Object.keys(SITE_DEFAULTS)) {
+    const saved = rows.find((r) => r.key === key)?.data || {}
+    out[key] = { ...SITE_DEFAULTS[key], ...saved }
+  }
+  return out
+}
+
+// Starts with the defaults (so the hero paints instantly), then swaps in saved content
+export function useSiteContent() {
+  const [content, setContent] = useState(() => mergeSections())
+  useEffect(() => {
+    if (!hasSupabase) return
+    let alive = true
+    loadOnce('site_content', () => supabaseRest('site_content?select=key,data'))
+      .then((rows) => alive && setContent(mergeSections(rows)))
+      .catch((err) => console.warn('Supabase fetch failed, using local content:', err.message))
+    return () => {
+      alive = false
+    }
+  }, [])
+  return content
 }

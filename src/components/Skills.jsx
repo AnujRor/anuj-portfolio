@@ -12,10 +12,10 @@ import {
   Pencil,
   Lightbulb,
 } from 'lucide-react'
-import { PROFILE } from '../data'
+import { useSiteContent } from '../lib/content'
 import { SectionTitle, SpotlightCard } from './fx'
 
-const ICONS = {
+export const ICONS = {
   Bot,
   Volume2,
   Waveform: AudioWaveform,
@@ -61,6 +61,7 @@ export default function Skills() {
     visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
   }
   const [active, setActive] = useState(null)
+  const { capabilities } = useSiteContent()
 
   return (
     <section id="skills" className="cv-auto py-28 relative">
@@ -70,11 +71,11 @@ export default function Skills() {
         </SectionTitle>
 
         <motion.div variants={container} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-5 mb-24">
-          {PROFILE.skills.map((s, i) => {
+          {capabilities.skills.map((s, i) => {
             const Icon = ICONS[s.iconType] || Lightbulb
-            const showName = active === s.name
+            const showName = active === i
             return (
-              <motion.div key={s.name} variants={item} whileHover={{ y: -6 }} whileTap={{ scale: 0.97 }} onClick={() => setActive(showName ? null : s.name)} className="clickable">
+              <motion.div key={i} variants={item} whileHover={{ y: -6 }} whileTap={{ scale: 0.97 }} onClick={() => setActive(showName ? null : i)} className="clickable">
                 <SpotlightCard
                   color={i % 2 ? '176, 38, 255' : '0, 246, 255'}
                   className="h-full rounded-2xl glass p-6 flex flex-col items-center justify-center text-center overflow-hidden min-h-[150px] cursor-pointer"
@@ -101,9 +102,9 @@ export default function Skills() {
         </motion.div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 max-w-4xl mx-auto">
-          {PROFILE.stats.map((s, i) => (
+          {capabilities.stats.map((s, i) => (
             <motion.div
-              key={s.label}
+              key={i}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -111,7 +112,7 @@ export default function Skills() {
             >
               <SpotlightCard className="border-spin rounded-2xl glass p-8 text-center">
                 <div className="relative text-white font-exo text-4xl md:text-5xl font-bold mb-2">
-                  <Counter target={s.value} suffix={s.suffix} duration={1800 + i * 300} />
+                  <Counter target={Number(s.value) || 0} suffix={s.suffix} duration={1800 + i * 300} />
                 </div>
                 <p className="relative text-light-gray font-medium text-sm tracking-wide uppercase">{s.label}</p>
               </SpotlightCard>

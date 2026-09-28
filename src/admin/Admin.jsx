@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import { ExternalLink, FileText, FolderKanban, LayoutDashboard, Lock, LogOut, Mail, Menu, UploadCloud, X } from 'lucide-react'
+import { Cpu, ExternalLink, FileText, FolderKanban, Image, LayoutDashboard, Lock, LogOut, Mail, Menu, Settings as SettingsIcon, UploadCloud, X } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { staticPostRows, staticProjectRows } from '../lib/content'
 import { Link, navigate } from '../router'
@@ -9,12 +9,18 @@ import { Button, Card, Field, Spinner, ToastProvider, inputCls, useToast } from 
 import Posts from './Posts'
 import Projects from './Projects'
 import Messages from './Messages'
+import SiteContent from './SiteContent'
+import Capabilities from './Capabilities'
+import Settings from './Settings'
 
 const NAV = [
   { key: '', label: 'Dashboard', icon: LayoutDashboard },
   { key: 'posts', label: 'Blog posts', icon: FileText },
   { key: 'projects', label: 'Projects', icon: FolderKanban },
   { key: 'messages', label: 'Messages', icon: Mail },
+  { key: 'img', label: 'img', icon: Image },
+  { key: 'capabilities', label: 'My Capabilities', icon: Cpu },
+  { key: 'settings', label: 'Settings', icon: SettingsIcon },
 ]
 
 function Shell({ children }) {
@@ -242,7 +248,7 @@ function Dashboard() {
 function Panel({ session, section, sub }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const current = NAV.find((n) => n.key === section) || NAV[0]
-  const page = { '': <Dashboard />, posts: <Posts sub={sub} />, projects: <Projects sub={sub} />, messages: <Messages /> }[section] ?? <Dashboard />
+  const page = { '': <Dashboard />, posts: <Posts sub={sub} />, projects: <Projects sub={sub} />, messages: <Messages />, img: <SiteContent sub={sub} />, capabilities: <Capabilities />, settings: <Settings session={session} /> }[section] ?? <Dashboard />
 
   const sidebar = (
     <nav className="flex flex-col h-full">

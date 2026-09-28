@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { motion, useMotionValue, useScroll, useSpring, useTransform } from 'framer-motion'
 import { ArrowDown, ArrowUpRight, Bot, Brain, Mic, Sparkles } from 'lucide-react'
 import { PROFILE, PROJECTS as STATIC_PROJECTS } from '../data'
-import { useProjects } from '../lib/content'
+import { useProjects, useSiteContent } from '../lib/content'
 import { Magnetic, Marquee } from './fx'
 
 function useTypewriter(words, typeSpeed = 60, deleteSpeed = 30, pause = 1600, enabled = true) {
@@ -37,8 +37,9 @@ function useTypewriter(words, typeSpeed = 60, deleteSpeed = 30, pause = 1600, en
 const ORBIT = [Bot, Brain, Mic, Sparkles]
 
 // Own component so each typed letter re-renders only this line, not the whole hero
-function TypedLine({ ready }) {
-  const typed = useTypewriter([PROFILE.heroType], 60, 30, 1600, ready)
+function TypedLine({ ready, text }) {
+  const words = useMemo(() => [text], [text])
+  const typed = useTypewriter(words, 60, 30, 1600, ready)
   return (
     <>
       <span>{typed}</span>
@@ -50,6 +51,7 @@ function TypedLine({ ready }) {
 export default function Hero({ ready = true }) {
   const { data: remoteProjects } = useProjects()
   const PROJECTS = remoteProjects.length ? remoteProjects : STATIC_PROJECTS
+  const { hero } = useSiteContent()
 
   // Mouse parallax for the portrait
   const mx = useMotionValue(0)
@@ -67,7 +69,7 @@ export default function Hero({ ready = true }) {
     my.set(e.clientY / window.innerHeight - 0.5)
   }
 
-  const headlineWords = PROFILE.headline.split(' ')
+  const headlineWords = hero.headline.split(' ')
   const show = ready ? 'visible' : 'hidden'
 
   return (
@@ -99,7 +101,7 @@ export default function Hero({ ready = true }) {
                 <span className="absolute inline-flex h-full w-full rounded-full bg-neon-green opacity-75 animate-ping" />
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-neon-green" />
               </span>
-              Building AI that speaks, feels &amp; helps
+              {hero.badge}
             </motion.div>
 
             {/* Full heading for search engines & screen readers; the typing effect below is visual only */}
@@ -109,7 +111,7 @@ export default function Hero({ ready = true }) {
               variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
               className="font-exo text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 tracking-wide min-h-[1.2em]"
             >
-              <TypedLine ready={ready} />
+              <TypedLine ready={ready} text={hero.typed} />
             </motion.div>
 
             <p className="font-exo text-3xl md:text-4xl lg:text-5xl font-bold mb-10 tracking-wide leading-tight">
@@ -167,7 +169,7 @@ export default function Hero({ ready = true }) {
               <div className="absolute -inset-2 rounded-full bg-tech-dark" />
 
               <img
-                src={PROFILE.photo}
+                src={hero.photo}
                 alt={`${PROFILE.fullName}, AI developer and voice AI builder from India`}
                 width="640"
                 height="640"
@@ -205,8 +207,8 @@ export default function Hero({ ready = true }) {
                   <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-neon-green" />
                 </span>
                 <div className="text-left">
-                  <p className="text-white text-sm font-semibold leading-tight">AI Dost</p>
-                  <p className="text-gray-400 text-[11px]">Live &amp; learning</p>
+                  <p className="text-white text-sm font-semibold leading-tight">{hero.chipTitle}</p>
+                  <p className="text-gray-400 text-[11px]">{hero.chipText}</p>
                 </div>
               </motion.div>
               </div>
