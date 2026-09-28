@@ -15,6 +15,7 @@ const COLUMNS = [
       ['About', '/#about'],
       ['Skills', '/#skills'],
       ['Projects', '/#projects'],
+      ['Services', '/#services'],
       ['Vision', '/#vision'],
     ],
   },
@@ -68,14 +69,14 @@ export default function Footer() {
               <span className="text-neon-blue ml-1 transition-transform duration-300 group-hover:translate-x-1">/&gt;</span>
             </Link>
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-gray-400">
-              Self-taught AI entrepreneur building voice AI companions and real-time assistants that speak, feel and solve real problems.
+              Self-taught AI developer from Haryana, building real-time voice AI assistants and practical AI tools.
             </p>
             <p className="mt-6 inline-flex items-center gap-2.5 rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-xs font-medium text-gray-300">
               <span className="relative flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full rounded-full bg-neon-green opacity-60 animate-ping" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-neon-green" />
               </span>
-              Open to collaborations
+              Available for freelance work
             </p>
           </div>
 

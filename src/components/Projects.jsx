@@ -1,10 +1,13 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { ChevronLeft, ChevronRight, Camera, ArrowRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Camera, ArrowRight, Github } from 'lucide-react'
 import { useProjects } from '../lib/content'
 import { SectionTitle, SpotlightCard, Magnetic } from './fx'
 
 const hasDemo = (project) => /^https?:\/\//.test(project.demoLink || '')
+const hasRepo = (project) => /^https?:\/\//.test(project.repoLink || '')
+// Status set in admin wins; otherwise a project with a live demo is "Live", the rest "In development"
+const statusOf = (project) => project.status || (hasDemo(project) ? 'Live' : 'In development')
 
 
 export default function Projects() {
@@ -120,6 +123,10 @@ export default function Projects() {
                           {project.tag}
                         </span>
                       </div>
+                      <p className={`inline-flex items-center gap-2 mb-4 text-xs font-semibold tracking-wider uppercase ${statusOf(project) === 'Live' ? 'text-neon-green' : 'text-amber-300'}`}>
+                        <span className={`w-2 h-2 rounded-full ${statusOf(project) === 'Live' ? 'bg-neon-green' : 'bg-amber-300'}`} />
+                        {statusOf(project)}
+                      </p>
                       <p className="text-light-gray text-lg mb-6">{project.longDescription}</p>
 
                       <div className="mb-6">
@@ -160,6 +167,7 @@ export default function Projects() {
                         </div>
                       </div>
 
+                      <div className="flex flex-wrap items-center gap-3">
                       <Magnetic strength={0.25}>
                         <a
                           // Until a project has a real demo URL, the button leads to the contact form instead of a dead "#"
@@ -173,6 +181,17 @@ export default function Projects() {
                           <ArrowRight className="relative w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" />
                         </a>
                       </Magnetic>
+                      {hasRepo(project) && (
+                        <a
+                          href={project.repoLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 px-5 py-3 rounded-full glass text-white font-semibold text-sm md:text-base hover:text-neon-blue transition-colors"
+                        >
+                          <Github className="w-5 h-5" /> View Code
+                        </a>
+                      )}
+                      </div>
                     </div>
                   </SpotlightCard>
                 </div>

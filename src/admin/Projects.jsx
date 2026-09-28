@@ -182,6 +182,20 @@ function ProjectEditor({ id }) {
           <Field label="Live demo link">
             <input value={project.demo_link} onChange={(e) => set('demo_link', e.target.value)} placeholder="https://..." className={inputCls} />
           </Field>
+          {/* repo_link / status columns come from supabase/project-links.sql */}
+          <div className="grid grid-cols-3 gap-3">
+            <Field label="GitHub link" className="col-span-2">
+              <input value={project.repo_link || ''} onChange={(e) => set('repo_link', e.target.value)} placeholder="https://github.com/..." className={inputCls} />
+            </Field>
+            <Field label="Status">
+              <select value={project.status || ''} onChange={(e) => set('status', e.target.value)} className={inputCls}>
+                <option value="">Auto</option>
+                <option value="Live">Live</option>
+                <option value="In development">In development</option>
+                <option value="Planned">Planned</option>
+              </select>
+            </Field>
+          </div>
         </Card>
 
         <div className="space-y-6">

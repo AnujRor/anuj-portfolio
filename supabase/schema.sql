@@ -59,6 +59,8 @@ create table if not exists public.projects (
   features text[] not null default '{}',
   tech_stack text[] not null default '{}',
   demo_link text not null default '#',
+  repo_link text not null default '',
+  status text not null default '',
   sort_order int not null default 0,
   published boolean not null default true,
   created_at timestamptz not null default now(),

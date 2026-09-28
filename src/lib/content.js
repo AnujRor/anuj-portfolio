@@ -88,6 +88,8 @@ export const projectFromRow = (r) => ({
   features: r.features || [],
   techStack: r.tech_stack || [],
   demoLink: r.demo_link || '#',
+  repoLink: r.repo_link || '',
+  status: r.status || '',
 })
 
 // Static data.js content converted to table rows (used by the admin "import" button)
@@ -177,12 +179,12 @@ export function useProjects() {
 
 export const SITE_DEFAULTS = {
   hero: {
-    badge: 'Building AI that speaks, feels & helps',
+    badge: 'Available for freelance projects & collaborations',
     typed: PROFILE.heroType,
     headline: PROFILE.headline,
     photo: PROFILE.photo,
     chipTitle: 'AI Dost',
-    chipText: 'Live & learning',
+    chipText: 'Voice AI in development',
   },
   about: {
     title: PROFILE.dreamer,
@@ -198,7 +200,7 @@ export const SITE_DEFAULTS = {
     skills: PROFILE.skills,
     stats: PROFILE.stats,
     vision: PROFILE.vision,
-    visionButton: 'Join the Revolution',
+    visionButton: "Let's Build Together",
     visionMarquee: ['Think Different', 'Build Fearless', 'Ship Daily', 'Dream Bigger', 'Made in Haryana'],
   },
   journey: {

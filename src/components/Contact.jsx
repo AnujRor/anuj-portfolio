@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import emailjs from '@emailjs/browser'
-import { MapPin, Linkedin, Instagram, Github, Send } from 'lucide-react'
-import { EMAILJS_PUBLIC_KEY, EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, SOCIALS } from '../config'
+import { MapPin, Linkedin, Instagram, Github, Send, Mail, MessageCircle } from 'lucide-react'
+import { CONTACT_EMAIL, EMAILJS_PUBLIC_KEY, EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, SOCIALS, WHATSAPP_NUMBER } from '../config'
 import { PROFILE } from '../data'
 import { hasSupabase, supabaseRest } from '../lib/content'
 import { Magnetic, SectionTitle } from './fx'
@@ -84,7 +84,7 @@ export default function Contact() {
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <SectionTitle index="05" eyebrow="Hire an AI Developer" accent="Future Together" className="!mb-6">
+        <SectionTitle index="06" eyebrow="Hire an AI Developer" accent="Future Together" className="!mb-6">
           Let's Build the
         </SectionTitle>
 
@@ -93,10 +93,30 @@ export default function Contact() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-center text-light-gray mb-16 max-w-2xl mx-auto"
+          className="text-center text-light-gray mb-8 max-w-2xl mx-auto"
         >
-          Have a project idea? Want to collaborate? Let's connect and make something extraordinary.
+          Have a project idea or want to collaborate? Send me a message and I'll get back to you.
         </motion.p>
+
+        {(CONTACT_EMAIL || WHATSAPP_NUMBER) && (
+          <div className="flex flex-wrap justify-center gap-3 mb-12">
+            {CONTACT_EMAIL && (
+              <a href={`mailto:${CONTACT_EMAIL}`} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full glass text-sm text-white hover:text-neon-blue transition-colors break-all">
+                <Mail className="w-4 h-4 text-neon-blue shrink-0" /> {CONTACT_EMAIL}
+              </a>
+            )}
+            {WHATSAPP_NUMBER && (
+              <a
+                href={`https://wa.me/${WHATSAPP_NUMBER}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full glass text-sm text-white hover:text-neon-green transition-colors"
+              >
+                <MessageCircle className="w-4 h-4 text-neon-green" /> Chat on WhatsApp
+              </a>
+            )}
+          </div>
+        )}
 
         <motion.div
           initial={{ opacity: 0, y: 50 }}

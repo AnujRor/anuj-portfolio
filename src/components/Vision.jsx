@@ -33,7 +33,7 @@ export default function Vision() {
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-        <SectionTitle index="04" eyebrow="Manifesto" accent="Vision" className="!mb-20">
+        <SectionTitle index="05" eyebrow="Manifesto" accent="Vision" className="!mb-20">
           My
         </SectionTitle>
 

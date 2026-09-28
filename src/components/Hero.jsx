@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { motion, useMotionValue, useScroll, useSpring, useTransform } from 'framer-motion'
-import { ArrowDown, ArrowUpRight, Bot, Brain, Mic, Sparkles } from 'lucide-react'
+import { ArrowDown, ArrowUpRight, Bot, Brain, Download, Mic, Sparkles } from 'lucide-react'
+import { RESUME_URL } from '../config'
 import { PROFILE, PROJECTS as STATIC_PROJECTS } from '../data'
 import { useProjects, useSiteContent } from '../lib/content'
 import { Magnetic, Marquee } from './fx'
@@ -146,6 +147,11 @@ export default function Hero({ ready = true }) {
                   Let's Talk
                 </a>
               </Magnetic>
+              {RESUME_URL && (
+                <a href={RESUME_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-5 py-3.5 rounded-full text-light-gray font-semibold hover:text-neon-blue transition-colors">
+                  <Download className="w-4 h-4" /> Resume
+                </a>
+              )}
             </motion.div>
           </motion.div>
 
@@ -223,8 +229,8 @@ export default function Hero({ ready = true }) {
                   <Sparkles className="w-4 h-4" />
                 </div>
                 <div className="text-left">
-                  <p className="text-white text-sm font-semibold leading-tight">{PROJECTS.length}+ AI Projects</p>
-                  <p className="text-gray-400 text-[11px]">Built solo, from zero</p>
+                  <p className="text-white text-sm font-semibold leading-tight">{PROJECTS.length} AI Projects</p>
+                  <p className="text-gray-400 text-[11px]">Designed & built solo</p>
                 </div>
               </motion.div>
               </div>

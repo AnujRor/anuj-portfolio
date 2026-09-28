@@ -7,7 +7,7 @@ const LINKS = [
   { name: 'ABOUT', href: '/#about' },
   { name: 'SKILLS', href: '/#skills' },
   { name: 'PROJECTS', href: '/#projects' },
-  { name: 'VISION', href: '/#vision' },
+  { name: 'SERVICES', href: '/#services' },
   { name: 'BLOG', href: '/blog', page: true },
   { name: 'CONTACT', href: '/#contact' },
 ]
