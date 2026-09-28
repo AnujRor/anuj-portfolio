@@ -197,6 +197,9 @@ export const SITE_DEFAULTS = {
   capabilities: {
     skills: PROFILE.skills,
     stats: PROFILE.stats,
+    vision: PROFILE.vision,
+    visionButton: 'Join the Revolution',
+    visionMarquee: ['Think Different', 'Build Fearless', 'Ship Daily', 'Dream Bigger', 'Made in Haryana'],
   },
   journey: {
     timeline: PROFILE.about.timeline,

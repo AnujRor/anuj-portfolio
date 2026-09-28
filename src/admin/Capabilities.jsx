@@ -1,12 +1,21 @@
 import { useEffect, useState } from 'react'
+import { motion } from 'framer-motion'
 import { ArrowDown, ArrowUp, ExternalLink, Plus, RotateCcw, Trash2 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { SITE_DEFAULTS } from '../lib/content'
 import { ICONS } from '../components/Skills'
-import { Button, Card, Field, ImageInput, Spinner, inputCls, useToast } from './ui'
+import { Link } from '../router'
+import { Button, Card, Field, ImageInput, ListInput, Spinner, inputCls, useToast } from './ui'
 
 const KEY = 'capabilities'
 const cardTitle = 'text-xs font-semibold tracking-wider uppercase text-gray-400'
+
+// Each tab edits some fields of the one "capabilities" row
+const TABS = [
+  { key: 'tools', label: 'AI tools', fields: ['skills'], preview: 'skills' },
+  { key: 'numbers', label: 'Numbers', fields: ['stats'], preview: 'skills' },
+  { key: 'vision', label: 'My Vision', fields: ['vision', 'visionButton', 'visionMarquee'], preview: 'vision' },
+]
 
 // Up/down/delete controls shared by the tool and stat rows
 function RowControls({ i, count, onMove, onRemove }) {
@@ -38,7 +47,8 @@ const listOps = (items, setItems) => ({
   },
 })
 
-export default function Capabilities() {
+export default function Capabilities({ sub }) {
+  const tab = TABS.find((t) => t.key === sub) || TABS[0]
   const [value, setValue] = useState(null)
   const [saving, setSaving] = useState(false)
   const toast = useToast()
@@ -63,7 +73,12 @@ export default function Capabilities() {
 
   const save = async (e) => {
     e.preventDefault()
+    const trim = (arr) => arr.map((x) => x.trim()).filter(Boolean)
     const data = {
+      ...value,
+      vision: trim(value.vision),
+      visionButton: value.visionButton.trim(),
+      visionMarquee: trim(value.visionMarquee),
       skills: value.skills.filter((s) => s.name.trim()).map((s) => ({ ...s, name: s.name.trim(), image: (s.image || '').trim() })),
       stats: value.stats.filter((s) => s.label.trim()).map((s) => ({ ...s, value: Number(s.value) || 0 })),
     }
@@ -76,16 +91,27 @@ export default function Capabilities() {
   }
 
   const reset = () => {
-    if (!confirm('Put back the original tools and numbers? (Not saved until you click Save.)')) return
-    setValue(SITE_DEFAULTS[KEY])
+    if (!confirm(`Put back the original ${tab.label}? (Not saved until you click Save.)`)) return
+    setValue((c) => ({ ...c, ...Object.fromEntries(tab.fields.map((f) => [f, SITE_DEFAULTS[KEY][f]])) }))
   }
 
   return (
     <form onSubmit={save} className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm text-gray-400">AI tools and numbers shown in the “My Capabilities” section.</p>
+        <div className="flex gap-1 p-1 rounded-xl glass">
+          {TABS.map((t) => (
+            <Link
+              key={t.key}
+              to={`/admin/capabilities/${t.key}`}
+              className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-colors ${tab.key === t.key ? 'text-tech-dark' : 'text-gray-400 hover:text-white'}`}
+            >
+              {tab.key === t.key && <motion.span layoutId="cap-tab" className="absolute inset-0 rounded-lg bg-neon-blue" />}
+              <span className="relative">{t.label}</span>
+            </Link>
+          ))}
+        </div>
         <div className="flex items-center gap-2">
-          <a href="/#skills" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-gray-400 hover:text-neon-blue">
+          <a href={`/#${tab.preview}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-gray-400 hover:text-neon-blue">
             <ExternalLink className="w-4 h-4" /> Preview
           </a>
           <Button type="button" variant="ghost" onClick={reset}>
@@ -97,6 +123,7 @@ export default function Capabilities() {
         </div>
       </div>
 
+      {tab.key === 'tools' && (
       <Card className="p-6">
         <div className="flex items-center justify-between mb-4">
           <p className={cardTitle}>AI tools ({value.skills.length})</p>
@@ -133,7 +160,9 @@ export default function Capabilities() {
           Tip: for a company logo you can paste <code className="text-neon-blue">https://www.google.com/s2/favicons?domain=THEIR-SITE.com&amp;sz=128</code> as the image URL.
         </p>
       </Card>
+      )}
 
+      {tab.key === 'numbers' && (
       <Card className="p-6">
         <div className="flex items-center justify-between mb-4">
           <p className={cardTitle}>Numbers ({value.stats.length})</p>
@@ -158,6 +187,24 @@ export default function Capabilities() {
           ))}
         </div>
       </Card>
+      )}
+
+      {tab.key === 'vision' && (
+      <Card className="p-6 space-y-5">
+        <div>
+          <p className={`${cardTitle} mb-3`}>Lines</p>
+          <ListInput value={value.vision} onChange={(v) => set('vision', v)} placeholder="I don't follow systems." />
+          <p className="text-xs text-gray-500 mt-2">Shown one below the other; every 2nd line is blue and underlined.</p>
+        </div>
+        <Field label="Button text">
+          <input value={value.visionButton} onChange={(e) => set('visionButton', e.target.value)} className={inputCls} />
+        </Field>
+        <div>
+          <p className={`${cardTitle} mb-3`}>Moving words at the bottom</p>
+          <ListInput value={value.visionMarquee} onChange={(v) => set('visionMarquee', v)} placeholder="Think Different" />
+        </div>
+      </Card>
+      )}
     </form>
   )
 }

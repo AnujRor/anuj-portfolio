@@ -23,6 +23,8 @@ const NAV = [
   { key: 'settings', label: 'Settings', icon: SettingsIcon },
 ]
 
+const TABBED = ['img', 'capabilities']
+
 function Shell({ children }) {
   return (
     <div className="min-h-screen bg-tech-dark text-white relative">
@@ -248,7 +250,7 @@ function Dashboard() {
 function Panel({ session, section, sub }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const current = NAV.find((n) => n.key === section) || NAV[0]
-  const page = { '': <Dashboard />, posts: <Posts sub={sub} />, projects: <Projects sub={sub} />, messages: <Messages />, img: <SiteContent sub={sub} />, capabilities: <Capabilities />, settings: <Settings session={session} /> }[section] ?? <Dashboard />
+  const page = { '': <Dashboard />, posts: <Posts sub={sub} />, projects: <Projects sub={sub} />, messages: <Messages />, img: <SiteContent sub={sub} />, capabilities: <Capabilities sub={sub} />, settings: <Settings session={session} /> }[section] ?? <Dashboard />
 
   const sidebar = (
     <nav className="flex flex-col h-full">
@@ -304,7 +306,8 @@ function Panel({ session, section, sub }) {
           <h1 className="font-exo text-lg font-bold">{current.label}</h1>
         </header>
         <main className="px-4 sm:px-8 py-8 max-w-6xl">
-          <motion.div key={`${section}/${sub}`} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
+          {/* Tabbed pages keep their state (and unsaved edits) when switching tabs */}
+          <motion.div key={TABBED.includes(section) ? section : `${section}/${sub}`} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
             {page}
           </motion.div>
         </main>
