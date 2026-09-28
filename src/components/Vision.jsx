@@ -1,3 +1,4 @@
+import { Fragment } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import { useSiteContent } from '../lib/content'
@@ -47,21 +48,32 @@ export default function Vision() {
             >
               <div className="relative">
                 <div
-                  className="absolute inset-0 blur-md text-neon-blue opacity-30 pointer-events-none font-bold text-center text-2xl md:text-3xl lg:text-5xl"
+                  className="absolute inset-0 blur-md text-neon-blue opacity-30 pointer-events-none font-bold text-center text-[clamp(1.35rem,6.5vw,1.5rem)] md:text-3xl lg:text-5xl"
                   aria-hidden
                 >
                   {statement}
                 </div>
                 <h3
-                  className={`font-exo font-bold text-white tracking-wide inline-block whitespace-nowrap text-2xl md:text-3xl lg:text-5xl ${
+                  className={`font-exo font-bold text-white tracking-wide inline-block max-w-full text-[clamp(1.35rem,6.5vw,1.5rem)] md:text-3xl lg:text-5xl ${
                     row % 2 === 0 ? '' : 'text-neon-blue'
                   }`}
                 >
-                  {statement.split('').map((ch, i) => (
-                    <motion.span key={i} custom={i} variants={letterContainer} className="inline-block">
-                      {ch === ' ' ? '\u00A0' : ch}
-                    </motion.span>
-                  ))}
+                  {/* Words stay whole but can wrap onto a new line on narrow phones */}
+                  {statement.split(' ').map((word, w, words) => {
+                    const start = words.slice(0, w).join(' ').length + (w ? 1 : 0)
+                    return (
+                      <Fragment key={w}>
+                        <span className="inline-block whitespace-nowrap">
+                          {word.split('').map((ch, i) => (
+                            <motion.span key={i} custom={start + i} variants={letterContainer} className="inline-block">
+                              {ch}
+                            </motion.span>
+                          ))}
+                        </span>
+                        {w < words.length - 1 && ' '}
+                      </Fragment>
+                    )
+                  })}
                 </h3>
                 {row % 2 === 1 && (
                   <motion.div

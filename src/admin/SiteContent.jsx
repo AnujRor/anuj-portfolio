@@ -191,7 +191,7 @@ export default function SiteContent({ sub }) {
   return (
     <form onSubmit={save}>
       <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
-        <div className="flex gap-1 p-1 rounded-xl glass">
+        <div className="flex gap-1 p-1 rounded-xl glass max-w-full overflow-x-auto">
           {TABS.map((t) => (
             <Link
               key={t.key}

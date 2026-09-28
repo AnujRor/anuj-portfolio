@@ -54,7 +54,7 @@ export default function About() {
             className="w-full md:w-1/3 flex justify-center"
           >
             <Tilt max={12}>
-              <div className="relative w-64 h-64 md:w-80 md:h-80">
+              <div className="relative w-64 h-64 md:w-56 md:h-56 lg:w-80 lg:h-80">
                 <div className="absolute inset-0 bg-neon-blue/25 rounded-[2.5rem] blur-2xl -translate-x-3 -translate-y-3" />
                 <div className="absolute inset-0 bg-neon-purple/20 rounded-[2.5rem] blur-2xl translate-x-3 translate-y-3" />
                 <div className="border-spin relative w-full h-full rounded-[2.5rem] p-[3px] bg-dark-slate">

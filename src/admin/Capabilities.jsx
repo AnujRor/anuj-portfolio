@@ -98,7 +98,7 @@ export default function Capabilities({ sub }) {
   return (
     <form onSubmit={save} className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex gap-1 p-1 rounded-xl glass">
+        <div className="flex gap-1 p-1 rounded-xl glass max-w-full overflow-x-auto">
           {TABS.map((t) => (
             <Link
               key={t.key}
@@ -172,15 +172,15 @@ export default function Capabilities({ sub }) {
         </div>
         <div className="space-y-3">
           {value.stats.map((s, i) => (
-            <div key={i} className="flex gap-3 items-end p-3 rounded-xl bg-tech-dark/40 border border-white/5">
+            <div key={i} className="flex flex-wrap sm:flex-nowrap gap-3 items-end p-3 rounded-xl bg-tech-dark/40 border border-white/5">
               <RowControls i={i} count={value.stats.length} onMove={stats.move} onRemove={stats.remove} />
-              <Field label="Number" className="w-28 shrink-0">
+              <Field label="Number" className="w-24 sm:w-28 shrink-0">
                 <input type="number" min="0" value={s.value} onChange={(e) => stats.update(i, 'value', e.target.value)} className={inputCls} />
               </Field>
               <Field label="After" className="w-20 shrink-0">
                 <input value={s.suffix} onChange={(e) => stats.update(i, 'suffix', e.target.value)} placeholder="+" className={inputCls} />
               </Field>
-              <Field label="Label" className="flex-1">
+              <Field label="Label" className="flex-1 min-w-[10rem]">
                 <input value={s.label} onChange={(e) => stats.update(i, 'label', e.target.value)} placeholder="AI Tools Mastered" className={inputCls} />
               </Field>
             </div>
