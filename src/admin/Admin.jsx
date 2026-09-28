@@ -187,6 +187,30 @@ function Dashboard() {
     }
   }
 
+  // Overwrites the built-in articles (matched by slug) with the latest text from data.js;
+  // publish state/date and any other posts stay as they are
+  const [syncing, setSyncing] = useState(false)
+  const syncPosts = async () => {
+    if (!confirm('Replace the built-in blog articles with the latest version from data.js? Edits you made to those articles here will be overwritten.')) return
+    setSyncing(true)
+    try {
+      for (const { published, published_at, ...row } of staticPostRows()) {
+        const { data, error } = await supabase.from('posts').update(row).eq('slug', row.slug).select('id')
+        if (error) throw error
+        if (!data.length) {
+          const { error: insertError } = await supabase.from('posts').insert({ ...row, published, published_at })
+          if (insertError) throw insertError
+        }
+      }
+      toast('Blog articles updated')
+      await load()
+    } catch (err) {
+      toast(err.message, 'error')
+    } finally {
+      setSyncing(false)
+    }
+  }
+
   if (!stats) return <Spinner />
 
   const cards = [
@@ -237,6 +261,9 @@ function Dashboard() {
           <Button onClick={() => navigate('/admin/posts/new')}>Write a new post</Button>
           <Button variant="ghost" onClick={() => navigate('/admin/projects/new')}>
             Add a project
+          </Button>
+          <Button variant="ghost" onClick={syncPosts} loading={syncing}>
+            Update built-in blog articles
           </Button>
           <a href="/" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold glass text-white hover:text-neon-blue">
             <ExternalLink className="w-4 h-4" /> View website
