@@ -82,7 +82,8 @@ async function sync() {
   const unlinked = rows.filter((r) => !r.github_id)
   const unlinkedPosts = posts.filter((p) => !p.github_id)
   let nextTop = Math.min(0, ...rows.map((r) => r.sort_order)) - 1
-  const result = { repos: repos.length, added: [] as string[], updated: [] as string[], removed: [] as string[] }
+  // `found` = every repo the token can see, `repos` = those shown (forks, this site and hidden ones are skipped)
+  const result = { found: all.length, skipped: all.filter((r) => !isShown(r, portfolioRepo)).map((r) => r.name), repos: repos.length, added: [] as string[], updated: [] as string[], removed: [] as string[] }
 
   for (const repo of repos) {
     // Existing link, else a manual project with the same repo name / title (first sync of the old projects)
