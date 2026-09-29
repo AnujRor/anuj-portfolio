@@ -38,8 +38,9 @@ Run these files once in **Supabase Dashboard → SQL Editor**:
 
 ### GitHub sync (projects update themselves from GitHub)
 
-`supabase/functions/github-sync` copies your GitHub repos (private ones too) into the Projects section every minute:
-new repo → new project, edited repo or README → project updated, deleted repo → project removed.
+`supabase/functions/github-sync` copies your GitHub repos (private ones too) into the Projects section **and the blog** every minute:
+new repo → new project + blog post, edited repo or README → both updated, deleted repo → both removed.
+The blog post is the README (install/setup/license sections left out), in the "Projects" category, and each project card gets a **Read full story** button to it.
 
 What comes from GitHub: name → title, About description → short description, topics → tag + tech stack,
 website → demo link, README → full description (first paragraphs) and features (bullets under a "Features" heading).
@@ -57,7 +58,7 @@ One-time setup:
    npx supabase secrets set GITHUB_TOKEN=github_pat_...
    npx supabase functions deploy github-sync --no-verify-jwt
    ```
-3. In Supabase SQL Editor run `supabase/project-links.sql` (if not done yet), then `supabase/github-sync.sql` (columns + every-minute schedule).
+3. In Supabase SQL Editor run `supabase/github-sync.sql` (all needed columns + every-minute schedule).
 4. Admin → Projects → **Sync now**. Existing projects whose title matches a repo name (e.g. "AI Dost" ↔ `ai-dost`) get linked;
    for other names, put the repo name in the project's **GitHub repo name** field.
 
@@ -105,6 +106,7 @@ supabase/       SQL setup files
 **Projects**
 - Only the first 4 projects show; a **See more projects** button reveals the rest (and **Show less** hides them)
 - **GitHub sync**: Supabase Edge Function mirrors GitHub repos into Projects every minute (add, update, remove); admin shows last sync and a **Sync now** button
+- Each synced repo also becomes a blog post written from its README; project cards link to it with **Read full story**. Blog posts now support bullet lists (`- item`)
 
 ### 28 September 2026
 

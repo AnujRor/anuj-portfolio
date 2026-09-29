@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ArrowLeft, Eye, ExternalLink, Pencil, Plus, Search, Trash2 } from 'lucide-react'
+import { ArrowLeft, Eye, ExternalLink, Github, Pencil, Plus, Search, Trash2 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { parseContent } from '../lib/content'
 import { pageTitle } from '../seo-core'
@@ -38,7 +38,7 @@ function PostList() {
   const toast = useToast()
 
   const load = async () => {
-    const { data, error } = await supabase.from('posts').select('id, title, slug, category, published, published_at').order('published_at', { ascending: false })
+    const { data, error } = await supabase.from('posts').select('*').order('published_at', { ascending: false })
     if (error) toast(error.message, 'error')
     setPosts(data || [])
   }
@@ -86,6 +86,11 @@ function PostList() {
                 <div className="flex-1 min-w-0">
                   <p className="text-white font-semibold truncate">{p.title}</p>
                   <p className="text-xs text-gray-500 mt-0.5">
+                    {p.github_id && (
+                      <span className="inline-flex items-center gap-1 text-neon-blue mr-1" title="Written from the GitHub README by the sync">
+                        <Github className="w-3 h-3" /> GitHub ·
+                      </span>
+                    )}
                     {p.category} · {p.published_at} · /blog/{p.slug}
                   </p>
                 </div>
@@ -132,6 +137,12 @@ function Preview({ post }) {
           <h2 key={i} className="font-exo text-xl font-bold text-white pl-3 border-l-4 border-neon-blue">
             {b.h}
           </h2>
+        ) : b.list ? (
+          <ul key={i} className="list-disc pl-6 space-y-1">
+            {b.list.map((item, j) => (
+              <li key={j}>{item}</li>
+            ))}
+          </ul>
         ) : (
           <blockquote key={i} className="glass rounded-xl p-4 text-white font-semibold">
             “{b.quote}”
@@ -240,6 +251,17 @@ function PostEditor({ id }) {
         </div>
       </div>
 
+      {post.github_id && (
+        <Card className="p-4 mb-6 text-sm text-gray-400 flex items-start gap-3">
+          <Github className="w-5 h-5 shrink-0 text-neon-blue" />
+          <p>
+            This post is written from a GitHub repo's README by the sync. Title, excerpt, text, tags, category, cover and date are overwritten when the
+            repo changes, so edit the README instead. The SEO fields and Published/Draft are yours. Deleting it here brings it back on the next sync.
+            Set it to Draft to hide it.
+          </p>
+        </Card>
+      )}
+
       <div className="grid lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-2 p-6 space-y-5">
           <input
@@ -271,7 +293,7 @@ function PostEditor({ id }) {
                 className={`${inputCls} font-mono leading-relaxed resize-y`}
               />
               <p className="text-xs text-gray-500 mt-2">
-                Blank line = new paragraph · <code className="text-neon-blue">## </code> heading · <code className="text-neon-blue">&gt; </code> quote
+                Blank line = new paragraph · <code className="text-neon-blue">## </code> heading · <code className="text-neon-blue">&gt; </code> quote · <code className="text-neon-blue">- </code> list item
               </p>
             </div>
           ) : (

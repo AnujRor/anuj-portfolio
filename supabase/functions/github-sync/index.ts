@@ -1,11 +1,11 @@
-// Mirrors your GitHub repos (private ones too) into the `projects` table:
-// new repo -> new project, edited repo/README -> updated project, deleted repo -> project removed.
+// Mirrors your GitHub repos (private ones too) into the `projects` and `posts` (blog) tables:
+// new repo -> new project + blog post, edited repo/README -> both updated, deleted repo -> both removed.
 // Runs every minute from pg_cron (supabase/github-sync.sql) and from the admin "Sync now" button.
 // Secrets: GITHUB_TOKEN (fine-grained token, read-only Metadata + Contents on all repos).
 // Optional: PORTFOLIO_REPO (this website's repo, never listed as a project; default "anuj-portfolio"),
 // SERVICE_KEY (a Supabase secret key, only needed if the project has the legacy service_role key turned off).
 import { createClient } from 'jsr:@supabase/supabase-js@2'
-import { type Repo, githubFields, isShown, newRowDefaults, normalize, parseReadme } from './core.ts'
+import { type Repo, githubFields, isShown, newRowDefaults, normalize, parseReadme, postFields, slugify } from './core.ts'
 
 const cors = {
   'Access-Control-Allow-Origin': '*',
@@ -44,21 +44,39 @@ async function listRepos(): Promise<Repo[]> {
   }
 }
 
+// Raw README markdown ('' when the repo has none)
 async function readme(repo: Repo) {
   const res = await gh(`/repos/${repo.full_name}/readme`, 'application/vnd.github.raw')
-  if (res.status === 404) return { about: '', features: [] }
+  if (res.status === 404) return ''
   if (!res.ok) throw new Error(`GitHub readme ${repo.name} ${res.status}`)
-  return parseReadme(await res.text())
+  return await res.text()
+}
+
+// Insert, or update only the fields that differ (so an unchanged repo doesn't bump updated_at every minute)
+async function upsert(table: string, row: Record<string, unknown> | undefined, fields: Record<string, unknown>, insertExtra: Record<string, unknown>) {
+  if (!row) {
+    const { error } = await db.from(table).insert({ ...insertExtra, ...fields })
+    if (error) throw error
+    return 'added'
+  }
+  const changed = Object.fromEntries(Object.entries(fields).filter(([k, v]) => !same(k, row[k], v)))
+  if (!Object.keys(changed).length) return null
+  const { error } = await db.from(table).update(changed).eq('id', row.id)
+  if (error) throw error
+  return 'updated'
 }
 
 async function sync() {
   const all = await listRepos()
   const repos = all.filter((r) => isShown(r, portfolioRepo))
 
-  const { data: rows, error } = await db.from('projects').select('*')
+  const [{ data: rows, error }, { data: posts, error: postsError }] = await Promise.all([db.from('projects').select('*'), db.from('posts').select('*')])
   if (error) throw error
+  if (postsError) throw postsError
 
   const byGithubId = new Map(rows.filter((r) => r.github_id).map((r) => [Number(r.github_id), r]))
+  const postByGithubId = new Map(posts.filter((p) => p.github_id).map((p) => [Number(p.github_id), p]))
+  const slugs = new Set(posts.map((p) => p.slug))
   const unlinked = rows.filter((r) => !r.github_id)
   let nextTop = Math.min(0, ...rows.map((r) => r.sort_order)) - 1
   const result = { repos: repos.length, added: [] as string[], updated: [] as string[], removed: [] as string[] }
@@ -70,34 +88,39 @@ async function sync() {
       row = unlinked.find((r) => (r.github_name && r.github_name.toLowerCase() === repo.name.toLowerCase()) || normalize(r.title) === normalize(repo.name))
       if (row) unlinked.splice(unlinked.indexOf(row), 1)
     }
+    const post = postByGithubId.get(repo.id)
 
-    // README only when there are new commits (saves API calls); metadata is compared every run
-    const changedCode = !row || !row.github_pushed_at || new Date(row.github_pushed_at).getTime() !== new Date(repo.pushed_at).getTime() || !row.github_id
-    const fields = githubFields(repo, changedCode ? await readme(repo) : null)
+    // README only when there are new commits or something is new (saves API calls); metadata is compared every run
+    const pushed = !row?.github_pushed_at || Date.parse(row.github_pushed_at) !== Date.parse(repo.pushed_at)
+    const md = !row || !row.github_id || !post || pushed ? await readme(repo) : null
 
-    if (!row) {
-      const { error } = await db.from('projects').insert({ ...newRowDefaults(repo), ...fields, sort_order: nextTop-- })
-      if (error) throw error
-      result.added.push(repo.name)
-    } else {
-      // Only write when something differs, so an unchanged repo doesn't bump updated_at every minute
-      const changed = Object.fromEntries(Object.entries(fields).filter(([k, v]) => !same(k, row[k], v)))
-      if (Object.keys(changed).length) {
-        const { error } = await db.from('projects').update(changed).eq('id', row.id)
-        if (error) throw error
-        result.updated.push(repo.name)
-      }
-    }
+    const project = await upsert('projects', row, githubFields(repo, md != null ? parseReadme(md) : null), row ? {} : { ...newRowDefaults(repo), sort_order: nextTop-- })
+
+    // Every project also gets a blog post. The cover follows the project's first screenshot set in admin.
+    const cover = row?.images?.[0] || '/assets/portfolio-placeholder.svg'
+    let slug = slugify(repo.name)
+    if (!post && slugs.has(slug)) slug = `${slug}-project`
+    slugs.add(slug)
+    const { published: _keepAdminChoice, ...postUpdate } = postFields(repo, md, cover)
+    const blog = await upsert('posts', post, post ? postUpdate : postFields(repo, md, cover), { slug })
+
+    if (project === 'added' || blog === 'added') result.added.push(repo.name)
+    else if (project || blog) result.updated.push(repo.name)
   }
 
   // Repos that were deleted, forked-only, or tagged hide-from-portfolio (a rename keeps the id, so it just updates the title)
   const keep = new Set(repos.map((r) => r.id))
   const gone = rows.filter((r) => r.github_id && !keep.has(Number(r.github_id)))
+  const gonePosts = posts.filter((p) => p.github_id && !keep.has(Number(p.github_id)))
   if (gone.length) {
     const { error } = await db.from('projects').delete().in('id', gone.map((r) => r.id))
     if (error) throw error
-    result.removed = gone.map((r) => r.github_name || r.title)
   }
+  if (gonePosts.length) {
+    const { error } = await db.from('posts').delete().in('id', gonePosts.map((p) => p.id))
+    if (error) throw error
+  }
+  result.removed = [...new Set([...gone.map((r) => r.github_name || r.title), ...gonePosts.map((p) => p.title)])]
   return result
 }
 

@@ -36,6 +36,7 @@ create table if not exists public.posts (
   meta_title text not null default '',
   meta_description text not null default '',
   tags text[] not null default '{}',
+  github_id bigint unique,
   published boolean not null default false,
   published_at date not null default current_date,
   created_at timestamptz not null default now(),

@@ -2,6 +2,7 @@
 // build script (scripts/seo-build.mjs) can import this file in Node as well.
 import { PROFILE } from './data.js'
 import { SOCIALS } from './config.js'
+import { blocksPlainText } from './lib/post-format.js'
 
 // Keyword targets: the full name (branded search), "AI developer" / "voice AI developer" + India/Haryana (local
 // intent) and the project names. Titles stay under ~60 characters and descriptions under ~160 so Google shows them whole.
@@ -153,8 +154,7 @@ export const blogSchema = (siteUrl, posts) => ({
   })),
 })
 
-const plainText = (content) =>
-  (Array.isArray(content) ? content : []).map((b) => (typeof b === 'string' ? b : b.h || b.quote || '')).join(' ')
+const plainText = blocksPlainText
 
 export const blogPostingSchema = (siteUrl, post) => {
   const url = `${siteUrl}/blog/${post.slug}`

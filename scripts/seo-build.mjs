@@ -6,6 +6,7 @@ import { dirname, join } from 'node:path'
 import { loadEnv } from 'vite'
 import { BLOG_POSTS, PROFILE, PROJECTS } from '../src/data.js'
 import { asset } from '../src/lib/assets.js'
+import { parseContent } from '../src/lib/post-format.js'
 import { SITE, makeAbs, postMetaDescription, relatedPosts, routeSeo } from '../src/seo-core.js'
 
 const DIST = 'dist'
@@ -18,13 +19,6 @@ if (!env.VITE_SITE_URL) {
 const abs = makeAbs(SITE_URL)
 
 // ---------- Content (Supabase if configured, otherwise data.js) ----------
-const parseContent = (text = '') =>
-  text
-    .split(/\n\s*\n/)
-    .map((b) => b.trim())
-    .filter(Boolean)
-    .map((b) => (b.startsWith('## ') ? { h: b.slice(3).trim() } : b.startsWith('> ') ? { quote: b.slice(2).trim() } : b))
-
 async function fetchTable(table, query) {
   const res = await fetch(`${env.VITE_SUPABASE_URL}/rest/v1/${table}?${query}`, {
     headers: { apikey: env.VITE_SUPABASE_ANON_KEY, Authorization: `Bearer ${env.VITE_SUPABASE_ANON_KEY}` },
@@ -128,7 +122,17 @@ const blogBody = ({ posts }) => wrap(`<h1>${esc(SITE.blogTitle)}</h1><p>${esc(SI
 
 function postBody(post, posts) {
   const blocks = post.content
-    .map((b) => (typeof b === 'string' ? `<p>${esc(b)}</p>` : b.h ? `<h2>${esc(b.h)}</h2>` : b.quote ? `<blockquote>${esc(b.quote)}</blockquote>` : ''))
+    .map((b) =>
+      typeof b === 'string'
+        ? `<p>${esc(b)}</p>`
+        : b.h
+          ? `<h2>${esc(b.h)}</h2>`
+          : b.quote
+            ? `<blockquote>${esc(b.quote)}</blockquote>`
+            : b.list
+              ? `<ul>${b.list.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>`
+              : '',
+    )
     .join('')
   const related = relatedPosts(post, posts)
   return wrap(`

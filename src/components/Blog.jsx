@@ -223,6 +223,14 @@ function BlogPost({ post, allPosts }) {
                 “{block.quote}”
               </blockquote>
             )
+          if (block.list)
+            return (
+              <ul key={i} className="mb-7 space-y-2 pl-6 list-disc marker:text-accent">
+                {block.list.map((item, j) => (
+                  <li key={j}>{item}</li>
+                ))}
+              </ul>
+            )
           return null
         })}
 

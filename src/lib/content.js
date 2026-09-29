@@ -1,28 +1,9 @@
 import { useEffect, useState } from 'react'
 import { BLOG_POSTS, PROFILE, PROJECTS } from '../data'
 import { asset } from './assets'
+import { blocksToText, parseContent } from './post-format'
 
-// ---------- Post body format ----------
-// Stored as plain text: blank line = new paragraph, "## " = heading, "> " = pull quote.
-
-export function parseContent(text = '') {
-  return text
-    .split(/\n\s*\n/)
-    .map((b) => b.trim())
-    .filter(Boolean)
-    .map((b) => {
-      if (b.startsWith('## ')) return { h: b.slice(3).trim() }
-      if (b.startsWith('> ')) return { quote: b.slice(2).trim() }
-      return b
-    })
-}
-
-export function blocksToText(blocks = []) {
-  return blocks
-    .map((b) => (typeof b === 'string' ? b : b.h ? `## ${b.h}` : b.quote ? `> ${b.quote}` : ''))
-    .filter(Boolean)
-    .join('\n\n')
-}
+export { blocksToText, parseContent }
 
 // ---------- Row <-> app shape ----------
 
@@ -34,6 +15,7 @@ export const photoSrcSet = (src) => (RESPONSIVE_PHOTOS.includes(src) ? `${src.re
 export const postFromRow = (r) => ({
   id: r.id,
   slug: r.slug,
+  githubId: r.github_id || null,
   title: r.title,
   excerpt: r.excerpt,
   content: parseContent(r.content),
@@ -60,6 +42,7 @@ export const projectFromRow = (r) => ({
   demoLink: r.demo_link || '#',
   repoLink: r.repo_link || '',
   status: r.status || '',
+  githubId: r.github_id || null,
 })
 
 // Static data.js content converted to table rows (used by the admin "import" button)

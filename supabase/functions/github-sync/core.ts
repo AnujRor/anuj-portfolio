@@ -105,7 +105,117 @@ export function parseReadme(md: string): { about: string; features: string[] } {
   return { about: about.length > 900 ? `${about.slice(0, 897).replace(/\s+\S*$/, '')}...` : about, features }
 }
 
-export const isShown = (repo: Repo, portfolioRepo: string) =>
+// README sections that are instructions for developers, not a story for blog readers
+const SKIP_SECTION = /install|setup|set up|getting started|usage|run locally|running|requirements|prerequisites|deploy|environment|env var|license|contribut|table of contents|scripts|folder structure|project structure|credits|acknowledg/i
+
+// README -> blog body in the site's post format ("## " heading, "> " quote, "- " list, blank line between blocks)
+export function readmeToPost(md: string): string {
+  const text = md.replace(/<!--[\s\S]*?-->/g, '').replace(/```[\s\S]*?```/g, '').replace(/\r/g, '')
+  const blocks: string[] = []
+  let para: string[] = []
+  let list: string[] = []
+  let quote: string[] = []
+  let skipLevel = 0 // > 0 while inside a skipped section of that heading level
+  let seenTitle = false
+
+  const flush = () => {
+    const p = plain(para.join(' '))
+    if (p) blocks.push(p)
+    if (list.length) blocks.push(list.map((i) => `- ${i}`).join('\n'))
+    const q = plain(quote.join(' '))
+    if (q) blocks.push(`> ${q}`)
+    para = []
+    list = []
+    quote = []
+  }
+
+  for (const raw of text.split('\n')) {
+    const line = raw.trim()
+    const h = line.match(/^(#{1,6})\s+(.*)$/)
+    if (h) {
+      flush()
+      const level = h[1].length
+      const title = plain(h[2])
+      if (skipLevel && level > skipLevel) continue
+      skipLevel = SKIP_SECTION.test(title) ? level : 0
+      // The first H1 is the repo name, which is already the post title
+      if (level === 1 && !seenTitle) {
+        seenTitle = true
+        continue
+      }
+      if (!skipLevel && title) blocks.push(`## ${title}`)
+      continue
+    }
+    if (skipLevel) continue
+    const bullet = line.match(/^(?:[-*+]|\d+[.)])\s+(.*)$/)
+    if (bullet) {
+      if (para.length || quote.length) {
+        const keep = list
+        list = []
+        flush()
+        list = keep
+      }
+      const item = plain(bullet[1].replace(/^\[[ x]\]\s*/i, ''))
+      if (item) list.push(item)
+      continue
+    }
+    if (line.startsWith('>')) {
+      if (para.length || list.length) flush()
+      quote.push(line.replace(/^>\s?/, ''))
+      continue
+    }
+    if (!line || line.startsWith('|') || /^[-=*_]{3,}$/.test(line)) {
+      flush()
+      continue
+    }
+    if (list.length || quote.length) flush()
+    para.push(line)
+  }
+  flush()
+
+  // Drop headings left with nothing under them
+  return blocks
+    .filter((b, i) => !(b.startsWith('## ') && (i === blocks.length - 1 || blocks[i + 1].startsWith('## '))))
+    .join('\n\n')
+}
+
+export const slugify = (s: string) =>
+  s
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .trim()
+    .replace(/[\s_]+/g, '-')
+    .replace(/-+/g, '-')
+    .slice(0, 80)
+
+const readTime = (text: string) => `${Math.max(1, Math.round(text.split(/\s+/).filter(Boolean).length / 200))} min read`
+
+// Blog post fields GitHub owns. `md` is the README (null = no new commits, so the body is left alone).
+export function postFields(repo: Repo, md: string | null, cover: string) {
+  const title = prettify(repo.name)
+  const topics = (repo.topics || []).filter((t) => t !== HIDE_TOPIC)
+  const about = md != null ? parseReadme(md).about : ''
+  const excerpt = repo.description?.trim() || about.split('\n')[0].slice(0, 200) || `${title}, a project by Anuj Ror.`
+  const fields: Record<string, unknown> = {
+    github_id: repo.id,
+    title,
+    // Without a description the excerpt comes from the README, so it is only rewritten when the README was read
+    ...(repo.description?.trim() || md != null ? { excerpt } : {}),
+    category: 'Projects',
+    tags: [...new Set([title, ...topics.map(prettify), repo.language].filter(Boolean) as string[])],
+    cover,
+    published_at: repo.created_at.slice(0, 10),
+    published: true,
+  }
+  if (md != null) {
+    const content = readmeToPost(md) || excerpt
+    fields.content = content
+    fields.read_time = readTime(content)
+  }
+  return fields
+}
+
+export const isShown =(repo: Repo, portfolioRepo: string) =>
   !repo.fork && repo.name.toLowerCase() !== portfolioRepo.toLowerCase() && !(repo.topics || []).includes(HIDE_TOPIC)
 
 // Fields GitHub owns. A field is only written when GitHub has a value, so a thin README

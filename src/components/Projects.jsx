@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { ChevronLeft, ChevronRight, ChevronDown, Camera, ArrowRight, Github } from 'lucide-react'
-import { useProjects } from '../lib/content'
+import { ChevronLeft, ChevronRight, ChevronDown, Camera, ArrowRight, BookOpen, Github } from 'lucide-react'
+import { usePosts, useProjects } from '../lib/content'
+import { Link } from '../router'
 import { SectionTitle, SpotlightCard, Magnetic } from './fx'
 
 const hasDemo = (project) => /^https?:\/\//.test(project.demoLink || '')
@@ -15,6 +16,9 @@ const INITIAL_COUNT = 4
 
 export default function Projects() {
   const { data: PROJECTS } = useProjects()
+  const { data: posts } = usePosts()
+  // Blog post the GitHub sync wrote for a project (same repo id)
+  const storyOf = (project) => project.githubId && posts.find((p) => p.githubId === project.githubId)
   const [active, setActive] = useState({})
   const [showAll, setShowAll] = useState(false)
   const shown = showAll ? PROJECTS : PROJECTS.slice(0, INITIAL_COUNT)
@@ -198,6 +202,14 @@ export default function Projects() {
                           <ArrowRight className="relative w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" />
                         </a>
                       </Magnetic>
+                      {storyOf(project) && (
+                        <Link
+                          to={`/blog/${storyOf(project).slug}`}
+                          className="inline-flex items-center gap-2 px-5 py-3 rounded-full glass text-white font-semibold text-sm md:text-base hover:text-neon-blue transition-colors"
+                        >
+                          <BookOpen className="w-5 h-5" /> Read full story
+                        </Link>
+                      )}
                       {hasRepo(project) && (
                         <a
                           href={project.repoLink}
