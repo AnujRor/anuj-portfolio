@@ -41,7 +41,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="dns-prefetch" href="https://ibyllydtlizqujqlviru.supabase.co" />
-    <link rel="preload" as="image" type="image/webp" href="/assets/anuj-ai-entrepreneur.webp" fetchpriority="high" />
+    <script>
+      // Hero photo is only on the home page; preloading it elsewhere (admin, blog) triggers an unused-preload warning
+      if (location.pathname === '/') {
+        var l = document.createElement('link')
+        l.rel = 'preload'; l.as = 'image'; l.type = 'image/webp'; l.fetchPriority = 'high'
+        l.href = '/assets/anuj-ai-entrepreneur.webp'
+        document.head.appendChild(l)
+      }
+    </script>
     <!-- Fonts load without blocking first paint (text shows in a fallback font, then swaps) -->
     <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Exo:wght@600;700&family=Sora:wght@400;500;600;700&display=swap" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Exo:wght@600;700&family=Sora:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'" />
