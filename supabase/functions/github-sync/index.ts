@@ -103,7 +103,12 @@ async function sync() {
     const pushed = !row?.github_pushed_at || Date.parse(row.github_pushed_at) !== Date.parse(repo.pushed_at)
     const md = !row || !row.github_id || !post || pushed ? await readme(repo) : null
 
-    const project = await upsert('projects', row, githubFields(repo, md != null ? parseReadme(md) : null), row ? {} : { ...newRowDefaults(repo), sort_order: nextTop-- })
+    const fields = githubFields(repo, md != null ? parseReadme(md) : null)
+    // The title comes from the repo name only for new projects, or when a repo whose project still has its
+    // auto title is renamed. Titles written by hand ("Ozy Sneakers" for `shoeswebsite`) are never replaced.
+    const autoTitle = row && row.github_name && repo.name !== row.github_name && normalize(row.title) === normalize(row.github_name)
+    if (row && !autoTitle) delete fields.title
+    const project = await upsert('projects', row, fields, row ? {} : { ...newRowDefaults(repo), sort_order: nextTop-- })
 
     // Every project also gets a blog post. The cover follows the project's first screenshot set in admin.
     const cover = row?.images?.[0] || '/assets/portfolio-placeholder.svg'
