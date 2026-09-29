@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ArrowDown, ArrowLeft, ArrowUp, Pencil, Plus, Trash2 } from 'lucide-react'
+import { ArrowDown, ArrowLeft, ArrowUp, Github, Pencil, Plus, RefreshCw, Trash2 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { Link, navigate } from '../router'
 import { Button, Card, Empty, Field, ImageInput, ListInput, Spinner, Toggle, inputCls, useToast } from './ui'
@@ -16,19 +16,87 @@ const EMPTY = {
   published: true,
 }
 
+const timeAgo = (iso) => {
+  const s = Math.round((Date.now() - new Date(iso)) / 1000)
+  return s < 60 ? `${s}s ago` : s < 3600 ? `${Math.round(s / 60)} min ago` : new Date(iso).toLocaleString('en-IN')
+}
+
+// GitHub -> Projects sync (supabase/functions/github-sync): runs every minute on its own; the button runs it now
+function GithubSync({ onSynced }) {
+  const [state, setState] = useState(undefined)
+  const [running, setRunning] = useState(false)
+  const toast = useToast()
+
+  const loadState = () =>
+    supabase
+      .from('github_sync_state')
+      .select('last_run, result')
+      .maybeSingle()
+      .then(({ data, error }) => setState(error ? null : data))
+
+  useEffect(() => {
+    loadState()
+  }, [])
+
+  const run = async () => {
+    setRunning(true)
+    const { data, error } = await supabase.functions.invoke('github-sync')
+    setRunning(false)
+    if (error) {
+      const body = await error.context?.json?.().catch(() => null)
+      toast(body?.error || 'Sync failed. Is the github-sync function deployed? See README "GitHub sync".', 'error')
+    } else if (data?.skipped) toast('Already synced a few seconds ago')
+    else toast(`Synced ${data.repos} repos: ${data.added.length} added, ${data.updated.length} updated, ${data.removed.length} removed`)
+    loadState()
+    onSynced()
+  }
+
+  // Table missing = supabase/github-sync.sql not run yet
+  if (state === null)
+    return (
+      <Card className="p-4 mb-6 text-sm text-gray-400 flex items-center gap-3">
+        <Github className="w-5 h-5 shrink-0" />
+        GitHub sync is not set up yet. Follow "GitHub sync" in the README.
+      </Card>
+    )
+
+  const r = state?.result || {}
+  return (
+    <Card className="p-4 mb-6 flex flex-col sm:flex-row sm:items-center gap-3">
+      <Github className="w-5 h-5 shrink-0 text-neon-blue" />
+      <div className="flex-1 text-sm">
+        <p className="text-white font-semibold">Synced with GitHub every minute</p>
+        <p className={r.error ? 'text-red-400' : 'text-gray-500'}>
+          {!state?.last_run
+            ? 'Never synced yet'
+            : r.error
+              ? `Last sync failed (${timeAgo(state.last_run)}): ${r.error}`
+              : `Last sync ${timeAgo(state.last_run)}${r.repos != null ? ` · ${r.repos} repos` : ''}`}
+        </p>
+      </div>
+      <Button variant="ghost" onClick={run} loading={running}>
+        <RefreshCw className="w-4 h-4" /> Sync now
+      </Button>
+    </Card>
+  )
+}
+
 function ProjectList() {
   const [projects, setProjects] = useState(null)
   const toast = useToast()
 
-  useEffect(() => {
+  const load = () =>
     supabase
       .from('projects')
-      .select('id, title, tag, images, published, sort_order')
+      .select('*')
       .order('sort_order')
       .then(({ data, error }) => {
         if (error) toast(error.message, 'error')
         setProjects(data || [])
       })
+
+  useEffect(() => {
+    load()
   }, [])
 
   const move = async (index, dir) => {
@@ -54,6 +122,7 @@ function ProjectList() {
 
   return (
     <div>
+      <GithubSync onSynced={load} />
       <div className="flex justify-between items-center mb-6">
         <p className="text-sm text-gray-400">Use the arrows to change the order on your website.</p>
         <Button onClick={() => navigate('/admin/projects/new')}>
@@ -80,7 +149,14 @@ function ProjectList() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-white font-semibold truncate">{p.title}</p>
-                  <p className="text-xs text-gray-500">{p.tag}</p>
+                  <p className="text-xs text-gray-500 flex items-center gap-1.5">
+                    {p.github_id && (
+                      <span className="inline-flex items-center gap-1 text-neon-blue" title={`Synced from GitHub repo ${p.github_name}`}>
+                        <Github className="w-3 h-3" /> {p.github_name} ·
+                      </span>
+                    )}
+                    {p.tag}
+                  </p>
                 </div>
                 <span
                   className={`hidden sm:inline px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider border ${
@@ -163,8 +239,25 @@ function ProjectEditor({ id }) {
         </div>
       </div>
 
+      {project.github_id && (
+        <Card className="p-4 mb-6 text-sm text-gray-400 flex items-start gap-3">
+          <Github className="w-5 h-5 shrink-0 text-neon-blue" />
+          <p>
+            Synced from GitHub repo <span className="text-white font-semibold">{project.github_name}</span>. Title, short description, tag, tech stack, demo
+            link, full description and features come from the repo (About, topics, website and README) and are overwritten when it changes, so edit
+            those on GitHub. Screenshots, status, order and Visible/Hidden are yours to set here. Deleting this project here brings it back on the next
+            sync. Use Hidden, or add the <code className="text-neon-blue">hide-from-portfolio</code> topic to the repo.
+          </p>
+        </Card>
+      )}
+
       <div className="grid lg:grid-cols-2 gap-6">
         <Card className="p-6 space-y-5">
+          {!project.github_id && (
+            <Field label="GitHub repo name" hint="Optional. The repo this project should sync with, e.g. ai-dost (repos with the same name as the title link on their own)">
+              <input value={project.github_name || ''} onChange={(e) => set('github_name', e.target.value.trim())} placeholder="ai-dost" className={inputCls} />
+            </Field>
+          )}
           <div className="grid grid-cols-3 gap-3">
             <Field label="Title" className="col-span-2">
               <input value={project.title} onChange={(e) => set('title', e.target.value)} className={inputCls} />

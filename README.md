@@ -33,7 +33,33 @@ Run these files once in **Supabase Dashboard → SQL Editor**:
 | `supabase/site-content.sql` | Table for editable Hero/About/Journey/Capabilities content |
 | `supabase/project-links.sql` | GitHub link + status columns for projects |
 | `supabase/post-seo.sql` | Meta title, meta description and tags for blog posts |
+| `supabase/github-sync.sql` | GitHub sync columns + every-minute schedule (see "GitHub sync") |
 | `supabase/rename-images.sql` | Fixes old image paths in saved rows |
+
+### GitHub sync (projects update themselves from GitHub)
+
+`supabase/functions/github-sync` copies your GitHub repos (private ones too) into the Projects section every minute:
+new repo → new project, edited repo or README → project updated, deleted repo → project removed.
+
+What comes from GitHub: name → title, About description → short description, topics → tag + tech stack,
+website → demo link, README → full description (first paragraphs) and features (bullets under a "Features" heading).
+Screenshots, status, order and Visible/Hidden stay under your control in admin. Private repos get no "View Code" button.
+Forks, this website's repo, and repos with the `hide-from-portfolio` topic are skipped.
+
+One-time setup:
+
+1. Make a GitHub token: <https://github.com/settings/personal-access-tokens/new> → Repository access: **All repositories** →
+   Permissions: **Contents: Read-only** (Metadata is added automatically) → Generate. It expires, so renew it before the date you pick.
+2. Deploy the function (in this folder):
+   ```bash
+   npx supabase login
+   npx supabase link --project-ref ibyllydtlizqujqlviru
+   npx supabase secrets set GITHUB_TOKEN=github_pat_...
+   npx supabase functions deploy github-sync --no-verify-jwt
+   ```
+3. In Supabase SQL Editor run `supabase/project-links.sql` (if not done yet), then `supabase/github-sync.sql` (columns + every-minute schedule).
+4. Admin → Projects → **Sync now**. Existing projects whose title matches a repo name (e.g. "AI Dost" ↔ `ai-dost`) get linked;
+   for other names, put the repo name in the project's **GitHub repo name** field.
 
 ### Settings in `src/config.js`
 
@@ -78,6 +104,7 @@ supabase/       SQL setup files
 
 **Projects**
 - Only the first 4 projects show; a **See more projects** button reveals the rest (and **Show less** hides them)
+- **GitHub sync**: Supabase Edge Function mirrors GitHub repos into Projects every minute (add, update, remove); admin shows last sync and a **Sync now** button
 
 ### 28 September 2026
 
@@ -112,6 +139,7 @@ supabase/       SQL setup files
 
 ### Still to do
 
+- [ ] Set up GitHub sync (token, deploy function, run `supabase/github-sync.sql`), see "GitHub sync" above
 - [ ] Run `supabase/site-content.sql`, `supabase/project-links.sql` and `supabase/post-seo.sql` in Supabase
 - [ ] Press **Update built-in blog articles** in the admin dashboard so the new articles go live
 - [ ] Add real screenshots, GitHub links and honest feature lists for each project in admin

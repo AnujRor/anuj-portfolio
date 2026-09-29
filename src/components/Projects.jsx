@@ -139,8 +139,10 @@ export default function Projects() {
                         <span className={`w-2 h-2 rounded-full ${statusOf(project) === 'Live' ? 'bg-neon-green' : 'bg-amber-300'}`} />
                         {statusOf(project)}
                       </p>
-                      <p className="text-light-gray text-lg mb-6">{project.longDescription}</p>
+                      <p className="text-light-gray text-lg mb-6 whitespace-pre-line">{project.longDescription || project.description}</p>
 
+                      {/* Projects synced from GitHub may have no features / stack; skip the empty headings */}
+                      {project.features.length > 0 && (
                       <div className="mb-6">
                         <h4 className="text-neon-blue font-semibold mb-4 text-sm tracking-[0.2em] uppercase">Key Features</h4>
                         <ul className="space-y-2">
@@ -159,7 +161,9 @@ export default function Projects() {
                           ))}
                         </ul>
                       </div>
+                      )}
 
+                      {project.techStack.length > 0 && (
                       <div className="mb-8">
                         <h4 className="text-neon-blue font-semibold mb-3 text-sm tracking-[0.2em] uppercase">Technology Stack</h4>
                         <div className="flex flex-wrap gap-2">
@@ -178,6 +182,7 @@ export default function Projects() {
                           ))}
                         </div>
                       </div>
+                      )}
 
                       <div className="flex flex-wrap items-center gap-3">
                       <Magnetic strength={0.25}>
