@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { ArrowLeft, Eye, ExternalLink, Pencil, Plus, Search, Trash2 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { parseContent } from '../lib/content'
+import { pageTitle } from '../seo-core'
 import { Link, navigate } from '../router'
 import { Button, Card, Empty, Field, ImageInput, Spinner, Toggle, inputCls, useToast } from './ui'
 
@@ -24,6 +25,9 @@ const EMPTY = {
   cover: '',
   category: 'General',
   read_time: '',
+  meta_title: '',
+  meta_description: '',
+  tags: [],
   published: false,
   published_at: new Date().toISOString().slice(0, 10),
 }
@@ -138,6 +142,44 @@ function Preview({ post }) {
   )
 }
 
+// Counter turns yellow past the length Google shows in results (~60 chars title, ~160 description)
+function Count({ n, max }) {
+  return <span className={n > max ? 'text-yellow-400' : 'text-gray-500'}>{`${n}/${max}`}</span>
+}
+
+function SeoCard({ post, set }) {
+  const [tagText, setTagText] = useState((post.tags || []).join(', '))
+  const title = pageTitle(post.meta_title || post.title || 'Post title')
+  const description = post.meta_description || post.excerpt || 'Write a meta description or an excerpt.'
+
+  return (
+    <Card className="p-6 space-y-5">
+      <p className="text-sm font-semibold text-white">SEO (Google search)</p>
+      <Field label="Meta title" hint={<>Empty = post title. &quot; | Anuj Ror&quot; is added · <Count n={title.length} max={60} /></>}>
+        <input value={post.meta_title || ''} onChange={(e) => set('meta_title', e.target.value)} placeholder={post.title} className={inputCls} />
+      </Field>
+      <Field label="Meta description" hint={<>Empty = excerpt · <Count n={description.length} max={160} /></>}>
+        <textarea value={post.meta_description || ''} onChange={(e) => set('meta_description', e.target.value)} rows={3} placeholder={post.excerpt} className={`${inputCls} resize-none`} />
+      </Field>
+      <Field label="Tags / keywords" hint="Comma separated, e.g. voice AI, AI Dost, Anuj Ror. Shown under the article too">
+        <input
+          value={tagText}
+          onChange={(e) => {
+            setTagText(e.target.value)
+            set('tags', [...new Set(e.target.value.split(',').map((t) => t.trim()).filter(Boolean))])
+          }}
+          className={inputCls}
+        />
+      </Field>
+      <div className="rounded-xl bg-white p-4 font-sans">
+        <p className="text-xs text-[#4d5156] truncate">yoursite.com › blog › {post.slug || '...'}</p>
+        <p className="mt-1 text-lg leading-snug text-[#1a0dab] line-clamp-1">{title}</p>
+        <p className="mt-1 text-sm leading-snug text-[#4d5156] line-clamp-2">{description}</p>
+      </div>
+    </Card>
+  )
+}
+
 function PostEditor({ id }) {
   const isNew = id === 'new'
   const [post, setPost] = useState(isNew ? EMPTY : null)
@@ -178,7 +220,7 @@ function PostEditor({ id }) {
     const row = { ...fields, slug: slugify(fields.slug), read_time: fields.read_time || readTime(fields.content) }
     const { data, error } = isNew ? await supabase.from('posts').insert(row).select().single() : await supabase.from('posts').update(row).eq('id', id).select().single()
     setSaving(false)
-    if (error) return toast(error.code === '23505' ? 'This slug is already used by another post' : error.message, 'error')
+    if (error) return toast(error.code === '23505' ? 'This slug is already used by another post' : /meta_|tags/.test(error.message) ? 'Run supabase/post-seo.sql in Supabase first' : error.message, 'error')
     toast(isNew ? 'Post created' : 'Changes saved')
     if (isNew) navigate(`/admin/posts/${data.id}`)
     else setPost(data)
@@ -264,6 +306,7 @@ function PostEditor({ id }) {
               <input value={post.read_time} onChange={(e) => set('read_time', e.target.value)} placeholder={readTime(post.content)} className={inputCls} />
             </Field>
           </Card>
+          <SeoCard post={post} set={set} />
           <Card className="p-6">
             <Field label="Cover image">
               <ImageInput value={post.cover} onChange={(v) => set('cover', v)} folder="posts" nameHint={post.title && `${post.title} cover`} />

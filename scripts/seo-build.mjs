@@ -5,7 +5,7 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { loadEnv } from 'vite'
 import { BLOG_POSTS, PROFILE, PROJECTS } from '../src/data.js'
-import { SITE, makeAbs, routeSeo } from '../src/seo-core.js'
+import { SITE, makeAbs, postMetaDescription, relatedPosts, routeSeo } from '../src/seo-core.js'
 
 const DIST = 'dist'
 const env = loadEnv('production', process.cwd(), '')
@@ -48,6 +48,9 @@ async function loadContent() {
         cover: r.cover,
         category: r.category,
         readTime: r.read_time,
+        metaTitle: r.meta_title || '',
+        metaDescription: r.meta_description || '',
+        tags: r.tags || [],
         date: r.published_at,
         updatedAt: r.updated_at?.slice(0, 10),
       })),
@@ -72,18 +75,27 @@ function headTags(seo) {
     `<title>${esc(seo.title)}</title>`,
     `<meta name="description" content="${esc(desc)}" />`,
     `<meta name="robots" content="${seo.noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'}" />`,
+    seo.keywords?.length ? `<meta name="keywords" content="${esc(seo.keywords.join(', '))}" />` : '',
     seo.noindex ? '' : `<link rel="canonical" href="${esc(url)}" />`,
     `<meta property="og:type" content="${type}" />`,
     `<meta property="og:title" content="${esc(seo.title)}" />`,
     `<meta property="og:description" content="${esc(desc)}" />`,
     `<meta property="og:url" content="${esc(url)}" />`,
     `<meta property="og:image" content="${esc(img)}" />`,
-    `<meta property="og:image:alt" content="${esc(seo.title)}" />`,
-    type === 'article' && seo.publishedTime ? `<meta property="article:published_time" content="${esc(seo.publishedTime)}" />` : '',
-    type === 'article' && seo.modifiedTime ? `<meta property="article:modified_time" content="${esc(seo.modifiedTime)}" />` : '',
+    `<meta property="og:image:alt" content="${esc(seo.imageAlt || seo.title)}" />`,
+    ...(type === 'article'
+      ? [
+          seo.publishedTime ? `<meta property="article:published_time" content="${esc(seo.publishedTime)}" />` : '',
+          seo.modifiedTime ? `<meta property="article:modified_time" content="${esc(seo.modifiedTime)}" />` : '',
+          `<meta property="article:author" content="${esc(abs('/'))}" />`,
+          seo.section ? `<meta property="article:section" content="${esc(seo.section)}" />` : '',
+          ...(seo.tags || []).map((t) => `<meta property="article:tag" content="${esc(t)}" />`),
+        ]
+      : []),
     `<meta name="twitter:title" content="${esc(seo.title)}" />`,
     `<meta name="twitter:description" content="${esc(desc)}" />`,
     `<meta name="twitter:image" content="${esc(img)}" />`,
+    `<meta name="twitter:image:alt" content="${esc(seo.imageAlt || seo.title)}" />`,
     `<script type="application/ld+json" id="ld-json">${JSON.stringify({ '@context': 'https://schema.org', '@graph': seo.schema || [] }).replace(/</g, '\\u003c')}</script>`,
   ]
   return tags.filter(Boolean).join('\n    ')
@@ -111,17 +123,20 @@ function homeBody({ posts, projects }) {
 
 const blogBody = ({ posts }) => wrap(`<h1>${esc(SITE.blogTitle)}</h1><p>${esc(SITE.blogDescription)}</p>${postLinks(posts)}<p><a href="/">Home</a></p>`)
 
-function postBody(post) {
+function postBody(post, posts) {
   const blocks = post.content
     .map((b) => (typeof b === 'string' ? `<p>${esc(b)}</p>` : b.h ? `<h2>${esc(b.h)}</h2>` : b.quote ? `<blockquote>${esc(b.quote)}</blockquote>` : ''))
     .join('')
+  const related = relatedPosts(post, posts)
   return wrap(`
     <nav><a href="/">Home</a> › <a href="/blog">Blog</a></nav>
     <article>
       <h1>${esc(post.title)}</h1>
-      <p>By ${esc(PROFILE.fullName)} · <time datetime="${esc(post.date)}">${esc(post.date)}</time> · ${esc(post.readTime || '')}</p>
+      <p>By <a href="/">${esc(PROFILE.fullName)}</a> · <time datetime="${esc(post.date)}">${esc(post.date)}</time> · ${esc(post.readTime || '')}</p>
       ${blocks}
-    </article>`)
+      ${post.tags?.length ? `<p>Topics: ${post.tags.map(esc).join(', ')}</p>` : ''}
+    </article>
+    ${related.length ? `<h2>Related articles</h2>${postLinks(related)}` : ''}`)
 }
 
 // ---------- Write pages ----------
@@ -130,8 +145,17 @@ if (!template.includes('<!--seo:start-->') || !template.includes('<!--noscript:s
   throw new Error('index.html is missing the <!--seo:start--> / <!--noscript:start--> markers')
 }
 
+// Search engine ownership checks (Google Search Console / Bing Webmaster Tools "HTML tag" method)
+const verifyTags = [
+  env.VITE_GOOGLE_SITE_VERIFICATION && `<meta name="google-site-verification" content="${esc(env.VITE_GOOGLE_SITE_VERIFICATION)}" />`,
+  env.VITE_BING_SITE_VERIFICATION && `<meta name="msvalidate.01" content="${esc(env.VITE_BING_SITE_VERIFICATION)}" />`,
+]
+  .filter(Boolean)
+  .join('\n    ')
+
 function render(seo, body) {
   return template
+    .replace('<!--verify-->', verifyTags)
     .replace(/<!--seo:start-->[\s\S]*?<!--seo:end-->/, `<!--seo:start-->\n    ${headTags(seo)}\n    <!--seo:end-->`)
     .replace(/<!--noscript:start-->[\s\S]*?<!--noscript:end-->/, `<!--noscript:start-->${body}<!--noscript:end-->`)
 }
@@ -149,7 +173,7 @@ write('/', render(routeSeo(SITE_URL, { path: '/', projects: content.projects }),
 write('/blog', render(routeSeo(SITE_URL, { path: '/blog', posts }), blogBody(content)))
 for (const post of posts) {
   const path = `/blog/${post.slug}`
-  write(path, render(routeSeo(SITE_URL, { path, post }), postBody(post)))
+  write(path, render(routeSeo(SITE_URL, { path, post }), postBody(post, posts)))
 }
 write('/admin', render({ title: 'Admin | Anuj', noindex: true, path: '/admin' }, wrap('<p>Admin</p>')))
 write('404.html', render(routeSeo(SITE_URL, { path: '/404', notFound: true }), wrap('<h1>Page not found</h1><p><a href="/">Go to the homepage</a></p>')))
@@ -178,6 +202,35 @@ ${urls
 `
 writeFileSync(join(DIST, 'sitemap.xml'), sitemap)
 
+// ---------- rss.xml (blog feed: readers, Feedly, and faster discovery of new posts) ----------
+const rssDate = (d) => new Date(d).toUTCString()
+const rss = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>${esc(`${PROFILE.fullName} | ${SITE.blogTitle}`)}</title>
+    <link>${esc(abs('/blog'))}</link>
+    <description>${esc(SITE.blogDescription)}</description>
+    <language>en-in</language>
+    <atom:link href="${esc(abs('/rss.xml'))}" rel="self" type="application/rss+xml" />
+    <lastBuildDate>${rssDate(new Date())}</lastBuildDate>
+${posts
+  .map(
+    (p) => `    <item>
+      <title>${esc(p.title)}</title>
+      <link>${esc(abs(`/blog/${p.slug}`))}</link>
+      <guid isPermaLink="true">${esc(abs(`/blog/${p.slug}`))}</guid>
+      <description>${esc(postMetaDescription(p))}</description>
+      <pubDate>${rssDate(p.date)}</pubDate>
+      <dc:creator>${esc(PROFILE.fullName)}</dc:creator>
+${[p.category, ...(p.tags || [])].filter(Boolean).map((c) => `      <category>${esc(c)}</category>`).join('\n')}
+    </item>`,
+  )
+  .join('\n')}
+  </channel>
+</rss>
+`
+writeFileSync(join(DIST, 'rss.xml'), rss)
+
 writeFileSync(
   join(DIST, 'robots.txt'),
   `User-agent: *
@@ -188,4 +241,4 @@ Sitemap: ${SITE_URL}/sitemap.xml
 `,
 )
 
-console.log(`✓ SEO: ${posts.length + 2} pages, sitemap.xml (${urls.length} URLs), robots.txt, 404.html — content from ${content.source}`)
+console.log(`✓ SEO: ${posts.length + 2} pages, sitemap.xml (${urls.length} URLs), robots.txt, rss.xml, 404.html — content from ${content.source}`)

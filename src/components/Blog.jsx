@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight, Search } from 'lucide-react'
 import { PROFILE } from '../data'
 import { usePosts } from '../lib/content'
 import { useRouteSeo } from '../seo'
+import { relatedPosts } from '../seo-core'
 import { Link } from '../router'
 import BlogShell from './BlogShell'
 
@@ -152,7 +153,7 @@ function BlogList({ allPosts }) {
 }
 
 function BlogPost({ post, allPosts }) {
-  const others = allPosts.filter((p) => p.slug !== post.slug).slice(0, 3)
+  const others = relatedPosts(post, allPosts)
 
   return (
     <article className="pb-20">
@@ -225,11 +226,25 @@ function BlogPost({ post, allPosts }) {
           return null
         })}
 
+        {post.tags?.length > 0 && (
+          <ul aria-label="Topics" className="mt-12 flex flex-wrap gap-2 font-ui text-[13px]">
+            {post.tags.map((t) => (
+              <li key={t} className="rounded-full border border-rule bg-white px-3 py-1 text-ink-soft">
+                #{t}
+              </li>
+            ))}
+          </ul>
+        )}
+
         <div className="mt-14 pt-8 border-t border-rule flex items-center gap-4">
           <img src={PROFILE.photo} alt="" width="56" height="56" loading="lazy" decoding="async" className="w-14 h-14 rounded-full object-cover" />
           <div className="font-ui">
             <p className="text-xs uppercase tracking-[0.18em] text-ink-faint">Written by</p>
-            <p className="text-base font-semibold text-ink">{PROFILE.fullName}</p>
+            <p className="text-base font-semibold text-ink">
+              <Link to="/" rel="author" className="hover:underline underline-offset-4">
+                {PROFILE.fullName}
+              </Link>
+            </p>
             <p className="text-sm text-ink-soft">
               AI entrepreneur from {PROFILE.location.split(',')[0]}.{' '}
               <Link to="/#about" className="text-accent hover:underline underline-offset-4">

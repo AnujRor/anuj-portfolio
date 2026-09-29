@@ -205,7 +205,7 @@ function Dashboard() {
       toast('Blog articles updated')
       await load()
     } catch (err) {
-      toast(err.message, 'error')
+      toast(/meta_|tags/.test(err.message) ? 'Run supabase/post-seo.sql in Supabase first' : err.message, 'error')
     } finally {
       setSyncing(false)
     }

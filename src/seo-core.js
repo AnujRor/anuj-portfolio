@@ -31,6 +31,24 @@ export const SITE = {
 
 export const pageTitle = (title) => (title ? `${title} | ${PROFILE.fullName}` : SITE.defaultTitle)
 
+// Post SEO with fallbacks: a missing meta title/description falls back to the title/excerpt
+export const postMetaTitle = (post) => pageTitle(post.metaTitle || post.title)
+export const postMetaDescription = (post) => post.metaDescription || post.excerpt || SITE.defaultDescription
+export const postKeywords = (post) => [...new Set([...(post.tags || []), post.category, PROFILE.fullName].filter(Boolean))]
+
+// Only raster images work as social previews (Facebook, WhatsApp, LinkedIn, X ignore SVG)
+export const shareImage = (src) => (src && !src.endsWith('.svg') ? src : SITE.image)
+
+// Other posts ranked by shared tags, then same category, then newest (internal links for readers and Google)
+export function relatedPosts(post, posts, limit = 3) {
+  const tags = new Set((post.tags || []).map((t) => t.toLowerCase()))
+  const score = (p) => (p.tags || []).filter((t) => tags.has(t.toLowerCase())).length * 2 + (p.category === post.category ? 1 : 0)
+  return posts
+    .filter((p) => p.slug !== post.slug)
+    .sort((a, b) => score(b) - score(a) || new Date(b.date) - new Date(a.date))
+    .slice(0, limit)
+}
+
 export const makeAbs = (siteUrl) => (path = '/') =>
   /^https?:\/\//.test(path) ? path : `${siteUrl}${path.startsWith('/') ? '' : '/'}${path}`
 
@@ -122,7 +140,17 @@ export const blogSchema = (siteUrl, posts) => ({
   name: SITE.blogTitle,
   description: SITE.blogDescription,
   author: { '@id': `${siteUrl}/#person` },
-  blogPost: posts.map((p) => ({ '@type': 'BlogPosting', headline: p.title, url: `${siteUrl}/blog/${p.slug}`, datePublished: p.date })),
+  inLanguage: 'en',
+  blogPost: posts.map((p) => ({
+    '@type': 'BlogPosting',
+    headline: p.title,
+    description: postMetaDescription(p),
+    url: `${siteUrl}/blog/${p.slug}`,
+    image: makeAbs(siteUrl)(shareImage(p.cover)),
+    datePublished: p.date,
+    dateModified: p.updatedAt || p.date,
+    author: { '@id': `${siteUrl}/#person` },
+  })),
 })
 
 const plainText = (content) =>
@@ -136,15 +164,19 @@ export const blogPostingSchema = (siteUrl, post) => {
     '@id': `${url}#article`,
     mainEntityOfPage: url,
     url,
-    headline: post.title,
-    description: post.excerpt,
-    image: makeAbs(siteUrl)(post.cover || SITE.image),
+    headline: post.title.slice(0, 110),
+    description: postMetaDescription(post),
+    image: [makeAbs(siteUrl)(shareImage(post.cover))],
     datePublished: post.date,
     dateModified: post.updatedAt || post.date,
-    author: { '@id': `${siteUrl}/#person` },
+    // Name + url inline as well as the @id, which is what Google's article author check reads
+    author: { '@type': 'Person', '@id': `${siteUrl}/#person`, name: PROFILE.fullName, url: `${siteUrl}/` },
     publisher: { '@id': `${siteUrl}/#person` },
+    isPartOf: { '@id': `${siteUrl}/blog#blog` },
     articleSection: post.category,
+    keywords: postKeywords(post).join(', '),
     wordCount: words,
+    timeRequired: `PT${Math.max(1, Math.round(words / 200))}M`,
     inLanguage: 'en',
   }
 }
@@ -155,13 +187,17 @@ export function routeSeo(siteUrl, { path, posts = [], post, notFound, projects =
   if (notFound) return { title: pageTitle('Page not found'), description: SITE.defaultDescription, path, noindex: true, schema: base }
   if (post) {
     return {
-      title: pageTitle(post.title),
-      description: post.excerpt || SITE.defaultDescription,
+      title: postMetaTitle(post),
+      description: postMetaDescription(post),
+      keywords: postKeywords(post),
       path,
-      image: post.cover && !post.cover.endsWith('.svg') ? post.cover : SITE.image,
+      image: shareImage(post.cover),
+      imageAlt: post.title,
       type: 'article',
       publishedTime: post.date,
       modifiedTime: post.updatedAt || post.date,
+      section: post.category,
+      tags: post.tags || [],
       schema: [...base, blogPostingSchema(siteUrl, post), breadcrumbSchema(siteUrl, [['Home', '/'], ['Blog', '/blog'], [post.title, path]])],
     }
   }
@@ -169,6 +205,7 @@ export function routeSeo(siteUrl, { path, posts = [], post, notFound, projects =
     return {
       title: pageTitle(SITE.blogTitle),
       description: SITE.blogDescription,
+      keywords: [...new Set([PROFILE.fullName, 'AI blog', 'voice AI blog', ...SITE.keywords.slice(1), ...posts.flatMap((p) => p.tags || [])])].slice(0, 20),
       path: '/blog',
       schema: [...base, blogSchema(siteUrl, posts), breadcrumbSchema(siteUrl, [['Home', '/'], ['Blog', '/blog']])],
     }
@@ -176,6 +213,7 @@ export function routeSeo(siteUrl, { path, posts = [], post, notFound, projects =
   return {
     title: SITE.defaultTitle,
     description: SITE.defaultDescription,
+    keywords: SITE.keywords,
     path: '/',
     schema: [...base, profilePageSchema(siteUrl), ...(projects.length ? [projectsSchema(siteUrl, projects)] : [])],
   }

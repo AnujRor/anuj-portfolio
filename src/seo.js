@@ -27,12 +27,28 @@ function upsertLink(rel, href) {
   el.setAttribute('href', href)
 }
 
-export function applySeo({ title, description = SITE.defaultDescription, path = '/', image = SITE.image, type = 'website', noindex, publishedTime, modifiedTime, schema = [] }) {
+export function applySeo({
+  title,
+  description = SITE.defaultDescription,
+  keywords = [],
+  path = '/',
+  image = SITE.image,
+  imageAlt,
+  type = 'website',
+  noindex,
+  publishedTime,
+  modifiedTime,
+  section,
+  tags = [],
+  schema = [],
+}) {
   const url = abs(path)
   const img = abs(image)
+  const isArticle = type === 'article'
 
   document.title = title
   upsertMeta('name', 'description', description)
+  upsertMeta('name', 'keywords', keywords.join(', '))
   upsertMeta('name', 'robots', noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1')
   if (noindex) document.head.querySelector('link[rel="canonical"]')?.remove()
   else upsertLink('canonical', url)
@@ -42,13 +58,26 @@ export function applySeo({ title, description = SITE.defaultDescription, path = 
   upsertMeta('property', 'og:description', description)
   upsertMeta('property', 'og:url', url)
   upsertMeta('property', 'og:image', img)
-  upsertMeta('property', 'og:image:alt', title)
-  upsertMeta('property', 'article:published_time', type === 'article' ? publishedTime : null)
-  upsertMeta('property', 'article:modified_time', type === 'article' ? modifiedTime : null)
+  upsertMeta('property', 'og:image:alt', imageAlt || title)
+  upsertMeta('property', 'article:published_time', isArticle ? publishedTime : null)
+  upsertMeta('property', 'article:modified_time', isArticle ? modifiedTime : null)
+  upsertMeta('property', 'article:author', isArticle ? abs('/') : null)
+  upsertMeta('property', 'article:section', isArticle ? section : null)
+  // article:tag repeats once per tag, so it is rebuilt instead of upserted
+  document.head.querySelectorAll('meta[property="article:tag"]').forEach((el) => el.remove())
+  if (isArticle) {
+    for (const t of tags) {
+      const el = document.createElement('meta')
+      el.setAttribute('property', 'article:tag')
+      el.setAttribute('content', t)
+      document.head.appendChild(el)
+    }
+  }
 
   upsertMeta('name', 'twitter:title', title)
   upsertMeta('name', 'twitter:description', description)
   upsertMeta('name', 'twitter:image', img)
+  upsertMeta('name', 'twitter:image:alt', imageAlt || title)
 
   let ld = document.getElementById('ld-json')
   if (!ld) {

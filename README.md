@@ -32,6 +32,7 @@ Run these files once in **Supabase Dashboard → SQL Editor**:
 | `supabase/schema.sql` | Full setup for a new project (all tables, policies, storage) |
 | `supabase/site-content.sql` | Table for editable Hero/About/Journey/Capabilities content |
 | `supabase/project-links.sql` | GitHub link + status columns for projects |
+| `supabase/post-seo.sql` | Meta title, meta description and tags for blog posts |
 | `supabase/rename-images.sql` | Fixes old image paths in saved rows |
 
 ### Settings in `src/config.js`
@@ -56,6 +57,17 @@ supabase/       SQL setup files
 ```
 
 ## Changelog
+
+### 29 September 2026
+
+**Blog SEO**
+- Every post now has its own **meta title**, **meta description** and **tags/keywords** (set in `data.js`, or in the admin post editor's new **SEO** card with a Google result preview and length counters)
+- Per-page `keywords`, `article:section`, `article:tag` and `article:author` meta tags
+- Richer `BlogPosting` structured data: author name + link, keywords, image, reading time
+- Tags shown under each article; **Keep reading** now picks related posts by shared tags
+- New RSS feed at `/rss.xml`
+- Optional Google Search Console / Bing verification tags via `VITE_GOOGLE_SITE_VERIFICATION` / `VITE_BING_SITE_VERIFICATION`
+- Hero photo is preloaded only on the home page (fixes a console warning on `/admin` and `/blog`)
 
 ### 28 September 2026
 
@@ -90,8 +102,9 @@ supabase/       SQL setup files
 
 ### Still to do
 
-- [ ] Run `supabase/site-content.sql` and `supabase/project-links.sql` in Supabase
+- [ ] Run `supabase/site-content.sql`, `supabase/project-links.sql` and `supabase/post-seo.sql` in Supabase
 - [ ] Press **Update built-in blog articles** in the admin dashboard so the new articles go live
 - [ ] Add real screenshots, GitHub links and honest feature lists for each project in admin
 - [ ] Add the WhatsApp number and resume PDF in `src/config.js`
 - [ ] Set `VITE_SITE_URL` to the live domain in the hosting environment
+- [ ] Add the site to Google Search Console, paste the verification code into `VITE_GOOGLE_SITE_VERIFICATION`, and submit `sitemap.xml`

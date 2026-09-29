@@ -204,10 +204,16 @@ Supports hundreds of platforms with multiple quality options, from HD to audio-o
 ]
 // Blog posts — edit, add or remove freely. `content` is a list of blocks:
 // plain strings become paragraphs, { h: '...' } becomes a heading, { quote: '...' } a pull quote.
+// SEO: `metaTitle` (Google title, ~50 chars; " | Anuj Ror" is added), `metaDescription` (~150 chars)
+// and `tags` (keywords, also shown under the article). Empty = title / excerpt are used.
 export const BLOG_POSTS = [
   {
     slug: 'from-harsola-to-ai',
     title: 'From Harsola to AI: How a Village Kid Started Building Intelligence',
+    metaTitle: "Harsola to AI: A Self-Taught AI Developer's Story",
+    metaDescription:
+      'How Anuj Ror, a self-taught AI developer from Harsola village in Haryana, went from asking ChatGPT questions to building voice AI with no college or team.',
+    tags: ['Anuj Ror', 'self-taught AI developer', 'AI developer Haryana', 'learn AI without college', 'AI journey', 'AI Dost'],
     excerpt: 'No college, no team, no funding. Just a laptop, a lot of curiosity and more failed attempts than I can count. This is how I got into AI.',
     date: '2026-09-10',
     readTime: '5 min read',
@@ -252,6 +258,10 @@ export const BLOG_POSTS = [
   {
     slug: 'building-ai-dost',
     title: 'Building AI Dost: An AI That Talks Like a Real Friend',
+    metaTitle: 'Building AI Dost: A Voice AI Friend to Talk To',
+    metaDescription:
+      'How Anuj Ror is building AI Dost, a real-time voice AI companion using speech-to-text, OpenAI, ElevenLabs and LiveKit, and what went wrong along the way.',
+    tags: ['AI Dost', 'voice AI companion', 'AI friend app', 'real-time voice assistant', 'LiveKit', 'ElevenLabs', 'Anuj Ror'],
     excerpt: 'Why I wanted to build an AI that feels like a friend instead of a tool, how it works under the hood, and what I got wrong along the way.',
     date: '2026-08-22',
     readTime: '5 min read',
@@ -299,6 +309,10 @@ export const BLOG_POSTS = [
   {
     slug: 'real-time-voice-ai-lessons',
     title: '5 Lessons From Building Real-Time Voice AI',
+    metaTitle: '5 Lessons From Building Real-Time Voice AI Agents',
+    metaDescription:
+      'Latency, interruptions, silences and robotic voices: 5 practical lessons on building real-time voice AI agents that tutorials skip, from building AI Dost.',
+    tags: ['real-time voice AI', 'voice AI latency', 'voice AI agents', 'conversational AI', 'speech-to-text', 'text-to-speech', 'AI Dost'],
     excerpt: 'Latency, interruptions, awkward silences and robotic voices. The hard parts of voice AI that tutorials skip, and how I deal with them now.',
     date: '2026-07-30',
     readTime: '5 min read',
