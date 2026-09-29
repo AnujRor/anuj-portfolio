@@ -3,7 +3,7 @@ import { motion, useMotionValue, useScroll, useSpring, useTransform } from 'fram
 import { ArrowDown, ArrowUpRight, Bot, Brain, Download, Mic, Sparkles } from 'lucide-react'
 import { RESUME_URL } from '../config'
 import { PROFILE, PROJECTS as STATIC_PROJECTS } from '../data'
-import { useProjects, useSiteContent } from '../lib/content'
+import { photoSrcSet, useProjects, useSiteContent } from '../lib/content'
 import { Magnetic, Marquee } from './fx'
 
 function useTypewriter(words, typeSpeed = 60, deleteSpeed = 30, pause = 1600, enabled = true) {
@@ -176,6 +176,8 @@ export default function Hero({ ready = true }) {
 
               <img
                 src={hero.photo}
+                srcSet={photoSrcSet(hero.photo)}
+                sizes="(min-width: 1024px) 352px, (min-width: 768px) 320px, 256px"
                 alt={`${PROFILE.fullName}, AI developer and voice AI builder from India`}
                 width="640"
                 height="640"

@@ -266,7 +266,7 @@ export const BLOG_POSTS = [
     date: '2026-08-22',
     readTime: '5 min read',
     category: 'Projects',
-    cover: '/assets/ai-dost-voice-ai-friend-cover.svg',
+    cover: '/assets/building-ai-dost-voice-ai-friend-blog-cover.webp',
     content: [
       "Most AI assistants feel like customer care. Polite, helpful and a little bit cold. You ask, they answer, and that's the end of it.",
       "I wanted to build something different. Not a smarter search engine, but something closer to a friend. Something you could talk to in the evening after a long day, that would actually listen and reply like it cared about the conversation.",
@@ -317,7 +317,7 @@ export const BLOG_POSTS = [
     date: '2026-07-30',
     readTime: '5 min read',
     category: 'Tech',
-    cover: '/assets/ai-dost-voice-ai-friend-screenshot-1.svg',
+    cover: '/assets/real-time-voice-ai-lessons-blog-cover.webp',
     content: [
       "When I started building voice AI, I thought the hard part would be the AI itself. Picking the right model, writing the right prompt, that kind of thing.",
       "I was wrong. The model is maybe a third of the work. The rest is everything around it: timing, audio, interruptions, and a lot of small decisions that decide whether a conversation feels natural or awkward.",

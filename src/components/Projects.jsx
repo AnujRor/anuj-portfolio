@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { ChevronLeft, ChevronRight, Camera, ArrowRight, Github } from 'lucide-react'
+import { ChevronLeft, ChevronRight, ChevronDown, Camera, ArrowRight, Github } from 'lucide-react'
 import { useProjects } from '../lib/content'
 import { SectionTitle, SpotlightCard, Magnetic } from './fx'
 
@@ -9,10 +9,22 @@ const hasRepo = (project) => /^https?:\/\//.test(project.repoLink || '')
 // Status set in admin wins; otherwise a project with a live demo is "Live", the rest "In development"
 const statusOf = (project) => project.status || (hasDemo(project) ? 'Live' : 'In development')
 
+// Projects shown before the "See more" button
+const INITIAL_COUNT = 4
+
 
 export default function Projects() {
   const { data: PROJECTS } = useProjects()
   const [active, setActive] = useState({})
+  const [showAll, setShowAll] = useState(false)
+  const shown = showAll ? PROJECTS : PROJECTS.slice(0, INITIAL_COUNT)
+  const hidden = PROJECTS.length - INITIAL_COUNT
+
+  const toggleAll = () => {
+    setShowAll((v) => !v)
+    // After "Show less", keep the button in view instead of leaving the reader far below the list
+    if (showAll) requestAnimationFrame(() => document.getElementById('projects-more')?.scrollIntoView({ block: 'center' }))
+  }
 
 
   const set = (id, index) => setActive((prev) => ({ ...prev, [id]: index }))
@@ -26,7 +38,7 @@ export default function Projects() {
         </SectionTitle>
 
         <div className="space-y-28">
-          {PROJECTS.map((project, idx) => {
+          {shown.map((project, idx) => {
             const current = active[project.id] ?? 0
             const count = project.images.length
             return (
@@ -199,6 +211,20 @@ export default function Projects() {
             )
           })}
         </div>
+
+        {hidden > 0 && (
+          <div id="projects-more" className="mt-20 flex justify-center">
+            <button
+              type="button"
+              onClick={toggleAll}
+              aria-expanded={showAll}
+              className="group inline-flex items-center gap-2 px-7 py-3.5 rounded-full glass border border-neon-blue/40 text-white font-semibold hover:text-neon-blue hover:border-neon-blue hover:shadow-glow transition-[color,border-color,box-shadow]"
+            >
+              {showAll ? 'Show less' : `See more projects (${hidden})`}
+              <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${showAll ? 'rotate-180' : 'group-hover:translate-y-0.5'}`} />
+            </button>
+          </div>
+        )}
       </div>
     </section>
   )

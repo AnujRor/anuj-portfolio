@@ -5,6 +5,7 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { loadEnv } from 'vite'
 import { BLOG_POSTS, PROFILE, PROJECTS } from '../src/data.js'
+import { asset } from '../src/lib/assets.js'
 import { SITE, makeAbs, postMetaDescription, relatedPosts, routeSeo } from '../src/seo-core.js'
 
 const DIST = 'dist'
@@ -45,7 +46,7 @@ async function loadContent() {
         title: r.title,
         excerpt: r.excerpt,
         content: parseContent(r.content),
-        cover: r.cover,
+        cover: asset(r.cover),
         category: r.category,
         readTime: r.read_time,
         metaTitle: r.meta_title || '',
@@ -77,6 +78,8 @@ function headTags(seo) {
     `<meta name="robots" content="${seo.noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'}" />`,
     seo.keywords?.length ? `<meta name="keywords" content="${esc(seo.keywords.join(', '))}" />` : '',
     seo.noindex ? '' : `<link rel="canonical" href="${esc(url)}" />`,
+    // The article cover is the largest thing on a post page; fetch it with the HTML instead of after the JS runs
+    seo.preloadImage ? `<link rel="preload" as="image" href="${esc(seo.preloadImage)}" fetchpriority="high" />` : '',
     `<meta property="og:type" content="${type}" />`,
     `<meta property="og:title" content="${esc(seo.title)}" />`,
     `<meta property="og:description" content="${esc(desc)}" />`,

@@ -2,23 +2,23 @@ import { Suspense, lazy, startTransition, useEffect, useState } from 'react'
 import { AnimatePresence, MotionConfig, motion, useScroll, useSpring } from 'framer-motion'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
-import About from './components/About'
-import Skills from './components/Skills'
-import Projects from './components/Projects'
-import Services from './components/Services'
-import Vision from './components/Vision'
-import Contact from './components/Contact'
 import Footer from './components/Footer'
 import CustomCursor from './components/CustomCursor'
 import Preloader from './components/Preloader'
 import Background from './components/Background'
-import Blog from './components/Blog'
 import { usePath } from './router'
 import { useRouteSeo } from './seo'
 import { useProjects } from './lib/content'
 
 // Admin code is only downloaded when someone opens /admin
 const Admin = lazy(() => import('./admin/Admin'))
+
+// Blog and the sections below the hero are separate chunks: blog readers skip the portfolio code and
+// home visitors skip the blog code. A blog URL starts its download right away instead of after React renders.
+const loadBlog = () => import('./components/Blog')
+if (window.location.pathname.startsWith('/blog')) loadBlog()
+const Blog = lazy(loadBlog)
+const HomeSections = lazy(() => import('./components/HomeSections'))
 
 function ScrollProgress() {
   const { scrollYProgress } = useScroll()
@@ -61,15 +61,16 @@ export default function App() {
   // Hero renders first; the sections below it render as a low-priority transition, which React
   // splits into small chunks instead of one long main-thread task
   const [showRest, setShowRest] = useState(false)
+  const [sectionsReady, setSectionsReady] = useState(false)
   useEffect(() => {
     startTransition(() => setShowRest(true))
   }, [])
 
   // Opening /#projects directly: scroll once the lower sections exist
   useEffect(() => {
-    if (!showRest || isBlog || !window.location.hash) return
+    if (!sectionsReady || isBlog || !window.location.hash) return
     requestAnimationFrame(() => document.getElementById(window.location.hash.slice(1))?.scrollIntoView())
-  }, [showRest])
+  }, [sectionsReady])
 
   // Projects feed the home page's structured data (same cached request the Projects section uses)
   const { data: projects, loading: projectsLoading } = useProjects()
@@ -89,7 +90,9 @@ export default function App() {
   if (isBlog) {
     return (
       <MotionConfig reducedMotion="user">
-        <Blog path={path} />
+        <Suspense fallback={<div className="min-h-screen bg-paper" />}>
+          <Blog path={path} />
+        </Suspense>
       </MotionConfig>
     )
   }
@@ -101,18 +104,13 @@ export default function App() {
         <Background />
         <ScrollProgress />
         <CustomCursor />
-        <Navbar path={path} sectionsReady={showRest} />
+        <Navbar path={path} sectionsReady={sectionsReady} />
         <main className="relative z-10 min-h-screen">
           <Hero ready={!loading} />
           {showRest && (
-            <>
-              <About />
-              <Skills />
-              <Projects />
-              <Services />
-              <Vision />
-              <Contact />
-            </>
+            <Suspense fallback={null}>
+              <HomeSections onReady={() => setSectionsReady(true)} />
+            </Suspense>
           )}
         </main>
         <Footer />

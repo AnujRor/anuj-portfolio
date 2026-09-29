@@ -192,6 +192,7 @@ export function routeSeo(siteUrl, { path, posts = [], post, notFound, projects =
       keywords: postKeywords(post),
       path,
       image: shareImage(post.cover),
+      preloadImage: post.cover,
       imageAlt: post.title,
       type: 'article',
       publishedTime: post.date,

@@ -69,6 +69,16 @@ supabase/       SQL setup files
 - Optional Google Search Console / Bing verification tags via `VITE_GOOGLE_SITE_VERIFICATION` / `VITE_BING_SITE_VERIFICATION`
 - Hero photo is preloaded only on the home page (fixes a console warning on `/admin` and `/blog`)
 
+**Blog covers & speed**
+- New 1200×630 WebP covers for the AI Dost and voice AI lessons articles (they now show as link previews on WhatsApp, LinkedIn, X)
+- Blog and the home sections below the hero load as separate JS chunks (main bundle 400 KB → 347 KB)
+- Phones download 480px profile photos instead of 640px
+- Post pages preload their cover image; blog layout shift fixed (CLS 0.32 → 0.004); blog text contrast raised (Accessibility 91 → 100)
+- Build script now maps old image names in Supabase rows to the renamed files (fixes wrong image paths in the pre-rendered HTML)
+
+**Projects**
+- Only the first 4 projects show; a **See more projects** button reveals the rest (and **Show less** hides them)
+
 ### 28 September 2026
 
 **Admin panel**

@@ -49,6 +49,9 @@
         var l = document.createElement('link')
         l.rel = 'preload'; l.as = 'image'; l.type = 'image/webp'; l.fetchPriority = 'high'
         l.href = '/assets/anuj-ai-entrepreneur.webp'
+        // Same srcset/sizes as the hero <img>, so the preload fetches the file the image will use
+        l.imageSrcset = '/assets/anuj-ai-entrepreneur-480.webp 480w, /assets/anuj-ai-entrepreneur.webp 640w'
+        l.imageSizes = '(min-width: 1024px) 352px, (min-width: 768px) 320px, 256px'
         document.head.appendChild(l)
       }
     </script>

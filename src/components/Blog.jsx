@@ -247,7 +247,7 @@ function BlogPost({ post, allPosts }) {
             </p>
             <p className="text-sm text-ink-soft">
               AI entrepreneur from {PROFILE.location.split(',')[0]}.{' '}
-              <Link to="/#about" className="text-accent hover:underline underline-offset-4">
+              <Link to="/#about" className="text-accent underline underline-offset-4 decoration-accent/40 hover:decoration-accent">
                 More about me
               </Link>
             </p>
@@ -295,7 +295,8 @@ export default function Blog({ path }) {
   let body
   if (loading) {
     body = (
-      <div className="min-h-[60vh] flex items-center justify-center">
+      // Full screen tall, so the footer stays below the fold until the articles arrive (no layout shift)
+      <div className="min-h-screen flex items-center justify-center">
         <div className="w-8 h-8 rounded-full border-2 border-rule border-t-accent animate-spin" />
       </div>
     )

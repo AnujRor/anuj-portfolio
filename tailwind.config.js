@@ -12,7 +12,7 @@ export default {
         'light-gray': 'hsl(var(--light-gray) / <alpha-value>)',
         // Blog: light editorial palette, deliberately separate from the neon portfolio
         paper: { DEFAULT: '#F7F7FC', deep: '#EEF0FA' },
-        ink: { DEFAULT: '#0F172A', soft: '#475569', faint: '#64748B' },
+        ink: { DEFAULT: '#0F172A', soft: '#475569', faint: '#5B687C' },
         rule: '#E2E8F0',
         accent: { DEFAULT: '#4338CA', soft: '#EEF2FF' },
       },
