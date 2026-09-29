@@ -2,7 +2,8 @@
 // new repo -> new project + blog post, edited repo/README -> both updated, deleted repo -> both removed.
 // Runs every minute from pg_cron (supabase/github-sync.sql) and from the admin "Sync now" button.
 // Secrets: GITHUB_TOKEN (fine-grained token, read-only Metadata + Contents on all repos).
-// Optional: PORTFOLIO_REPO (this website's repo, never listed as a project; default "anuj-portfolio"),
+// Optional: VERCEL_DEPLOY_HOOK (rebuilds the site after a change so SEO pages and the sitemap stay current),
+// PORTFOLIO_REPO (this website's repo, never listed as a project; default "anuj-portfolio"),
 // SERVICE_KEY (a Supabase secret key, only needed if the project has the legacy service_role key turned off).
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 import { type Repo, githubFields, isShown, newRowDefaults, normalize, parseReadme, postFields, slugify } from './core.ts'
@@ -22,6 +23,7 @@ const same = (key: string, a: unknown, b: unknown) =>
 const MIN_GAP_MS = 20_000
 
 const token = Deno.env.get('GITHUB_TOKEN')
+const deployHook = Deno.env.get('VERCEL_DEPLOY_HOOK')
 const portfolioRepo = Deno.env.get('PORTFOLIO_REPO') || 'anuj-portfolio'
 const db = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || Deno.env.get('SERVICE_KEY')!, { auth: { persistSession: false } })
 
@@ -78,6 +80,7 @@ async function sync() {
   const postByGithubId = new Map(posts.filter((p) => p.github_id).map((p) => [Number(p.github_id), p]))
   const slugs = new Set(posts.map((p) => p.slug))
   const unlinked = rows.filter((r) => !r.github_id)
+  const unlinkedPosts = posts.filter((p) => !p.github_id)
   let nextTop = Math.min(0, ...rows.map((r) => r.sort_order)) - 1
   const result = { repos: repos.length, added: [] as string[], updated: [] as string[], removed: [] as string[] }
 
@@ -88,7 +91,12 @@ async function sync() {
       row = unlinked.find((r) => (r.github_name && r.github_name.toLowerCase() === repo.name.toLowerCase()) || normalize(r.title) === normalize(repo.name))
       if (row) unlinked.splice(unlinked.indexOf(row), 1)
     }
-    const post = postByGithubId.get(repo.id)
+    let post = postByGithubId.get(repo.id)
+    // A project that already had a hand-written blog post adopts it instead of getting a second one
+    if (!post && row && normalize(row.title).length >= 3) {
+      post = unlinkedPosts.find((p) => p.category === 'Projects' && normalize(p.title).includes(normalize(row.title)))
+      if (post) unlinkedPosts.splice(unlinkedPosts.indexOf(post), 1)
+    }
 
     // README only when there are new commits or something is new (saves API calls); metadata is compared every run
     const pushed = !row?.github_pushed_at || Date.parse(row.github_pushed_at) !== Date.parse(repo.pushed_at)
@@ -102,7 +110,12 @@ async function sync() {
     if (!post && slugs.has(slug)) slug = `${slug}-project`
     slugs.add(slug)
     const { published: _keepAdminChoice, ...postUpdate } = postFields(repo, md, cover)
-    const blog = await upsert('posts', post, post ? postUpdate : postFields(repo, md, cover), { slug })
+    // Hand-written posts (github_content = false) keep their text, cover and SEO; the sync only links them to the repo
+    const blog = !post
+      ? await upsert('posts', post, postFields(repo, md, cover), { slug })
+      : post.github_content === false || !post.github_id
+        ? await upsert('posts', post, { github_id: repo.id, github_content: false }, {})
+        : await upsert('posts', post, postUpdate, {})
 
     if (project === 'added' || blog === 'added') result.added.push(repo.name)
     else if (project || blog) result.updated.push(repo.name)
@@ -134,7 +147,10 @@ Deno.serve(async (req) => {
 
   try {
     const result = await sync()
-    await db.from('github_sync_state').upsert({ id: 1, last_run: new Date().toISOString(), result })
+    // Something changed: rebuild the site so the sitemap, RSS and pre-rendered SEO pages include it
+    const changed = result.added.length + result.updated.length + result.removed.length > 0
+    if (changed && deployHook) await fetch(deployHook, { method: 'POST' }).catch(() => {})
+    await db.from('github_sync_state').upsert({ id: 1, last_run: new Date().toISOString(), result: { ...result, redeployed: changed && !!deployHook } })
     return json(result)
   } catch (err) {
     const result = { error: err instanceof Error ? err.message : String(err) }

@@ -11,8 +11,10 @@ alter table public.projects add column if not exists github_id bigint unique;
 alter table public.projects add column if not exists github_name text not null default '';
 alter table public.projects add column if not exists github_pushed_at timestamptz;
 
--- Each synced repo also gets a blog post; github_id marks the posts the sync owns (other posts are never touched)
+-- Each synced repo also gets a blog post; github_id marks the posts linked to a repo (unlinked posts are never touched)
 alter table public.posts add column if not exists github_id bigint unique;
+-- false = hand-written post the sync adopted: it is linked to the repo but its text, cover and SEO are never overwritten
+alter table public.posts add column if not exists github_content boolean not null default true;
 -- Same as supabase/post-seo.sql, repeated so this file works on its own
 alter table public.posts add column if not exists meta_title text not null default '';
 alter table public.posts add column if not exists meta_description text not null default '';

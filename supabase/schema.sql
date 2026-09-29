@@ -37,6 +37,8 @@ create table if not exists public.posts (
   meta_description text not null default '',
   tags text[] not null default '{}',
   github_id bigint unique,
+  -- false = hand-written post the sync only links to its repo (text, cover and SEO are never overwritten)
+  github_content boolean not null default true,
   published boolean not null default false,
   published_at date not null default current_date,
   created_at timestamptz not null default now(),
