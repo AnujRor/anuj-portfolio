@@ -38,7 +38,9 @@ export function usePath() {
 export function Link({ to, onClick, ...rest }) {
   const handle = (e) => {
     onClick?.(e)
-    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+    const isLeftClick = e.button === 0
+    const isTouch = e.button == null
+    if (e.defaultPrevented || (!isLeftClick && !isTouch) || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
     e.preventDefault()
     navigate(to)
   }
