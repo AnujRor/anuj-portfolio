@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, Home } from 'lucide-react'
 import { Link } from '../router'
 
 const LINKS = [
+  { name: 'HOME', href: '/#hero', icon: Home },
   { name: 'ABOUT', href: '/#about' },
   { name: 'SKILLS', href: '/#skills' },
   { name: 'PROJECTS', href: '/#projects' },
@@ -85,6 +86,7 @@ export default function Navbar({ path = '/', sectionsReady = true }) {
                   />
                 )}
                 <span className="relative flex items-center gap-1.5">
+                  {l.icon && <l.icon className="w-3.5 h-3.5" />}
                   {l.name}
                   {l.page && <span className="w-1.5 h-1.5 rounded-full bg-neon-purple shadow-glow-purple animate-pulse" />}
                 </span>
@@ -114,10 +116,11 @@ export default function Navbar({ path = '/', sectionsReady = true }) {
                     <Link
                       to={l.href}
                       onClick={() => setOpen(false)}
-                      className={`block px-3 py-2 rounded-lg text-sm font-medium tracking-widest transition-colors duration-300 ${
+                      className={`block px-3 py-2 rounded-lg text-sm font-medium tracking-widest transition-colors duration-300 flex items-center gap-2 ${
                         active === l.href ? 'text-neon-blue bg-neon-blue/10' : 'text-gray-300 hover:text-neon-blue'
                       }`}
                     >
+                      {l.icon && <l.icon className="w-4 h-4" />}
                       {l.name}
                     </Link>
                   </motion.div>
