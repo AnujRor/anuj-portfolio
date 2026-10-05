@@ -14,9 +14,10 @@ export default function Background() {
     const ctx = canvas.getContext('2d')
     // Lite mode (low-end device, set in index.html) and reduced motion get one static frame only
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches || document.documentElement.classList.contains('perf-lite')
-    const light = window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 768 || navigator.connection?.saveData
-    const GAP = light ? 38 : 30
-    const FRAME_MS = light ? 1000 / 20 : 1000 / 30
+    // Completely disable animation on mobile / coarse pointer / data saver / low-end
+    const light = window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 768 || navigator.connection?.saveData || (navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 4
+    const GAP = light ? 44 : 30
+    const FRAME_MS = light ? 1000 / 12 : 1000 / 30
     const mouse = { x: -9999, y: -9999, tx: -9999, ty: -9999 }
     let w = 0
     let h = 0
@@ -31,7 +32,7 @@ export default function Background() {
     let levels = new Uint8Array(0)
 
     const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, light ? 1.5 : 2)
+      const dpr = Math.min(window.devicePixelRatio || 1, light ? 1 : 2)
       w = window.innerWidth
       h = window.innerHeight
       canvas.width = w * dpr
@@ -106,7 +107,7 @@ export default function Background() {
       ctx.globalAlpha = 1
 
       // Data pulses travelling along grid lanes
-      if (!once && Math.random() < 0.05 && pulses.length < 6) spawnPulse()
+      if (!once && Math.random() < 0.03 && pulses.length < 4) spawnPulse()
       pulses = pulses.filter((p) => {
         p.pos += p.speed
         const len = 120
@@ -130,7 +131,7 @@ export default function Background() {
     }
 
     const start = () => {
-      if (running || reduce || document.hidden || scrolling) return
+      if (running || reduce || document.hidden || scrolling || light) return
       running = true
       raf = requestAnimationFrame(draw)
     }
@@ -166,7 +167,7 @@ export default function Background() {
     resize() // paints one static frame immediately
     // Start animating only after the page has loaded, so it never competes with first paint
     let startTimer
-    const scheduleStart = () => (startTimer = setTimeout(() => (window.requestIdleCallback || setTimeout)(start), 1500))
+    const scheduleStart = () => (startTimer = setTimeout(() => (window.requestIdleCallback || setTimeout)(start), 2000))
     if (document.readyState === 'complete') scheduleStart()
     else window.addEventListener('load', scheduleStart, { once: true })
 
@@ -187,6 +188,21 @@ export default function Background() {
       document.removeEventListener('visibilitychange', onVisibility)
     }
   }, [])
+
+  // On mobile / low-end: render only the static gradient background (no canvas, no auroras)
+  const isMobile = typeof window !== 'undefined' && (window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 768)
+  const isLowEnd = typeof window !== 'undefined' && ((navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 4 || navigator.connection?.saveData)
+
+  if (isMobile || isLowEnd) {
+    return (
+      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden bg-tech-dark">
+        {/* Deep colour wash only - no auroras, no canvas animation */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(0,246,255,0.12),transparent_60%),radial-gradient(ellipse_60%_50%_at_100%_100%,rgba(176,38,255,0.12),transparent_60%)]" />
+        {/* Vignette keeps the edges dark so content stays readable */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(5,8,12,0.85)_100%)]" />
+      </div>
+    )
+  }
 
   return (
     <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden bg-tech-dark">
