@@ -3,9 +3,7 @@ import { AnimatePresence, MotionConfig, motion, useScroll, useSpring } from 'fra
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import Footer from './components/Footer'
-import CustomCursor from './components/CustomCursor'
 import Preloader from './components/Preloader'
-import Background from './components/Background'
 import { usePath } from './router'
 import { useRouteSeo } from './seo'
 import { useProjects } from './lib/content'
@@ -19,6 +17,10 @@ const loadBlog = () => import('./components/Blog')
 if (window.location.pathname.startsWith('/blog')) loadBlog()
 const Blog = lazy(loadBlog)
 const HomeSections = lazy(() => import('./components/HomeSections'))
+
+// Heavy decorative components: load after first paint on desktop only
+const Background = lazy(() => import('./components/Background'))
+const CustomCursor = lazy(() => import('./components/CustomCursor'))
 
 function ScrollProgress() {
   const { scrollYProgress } = useScroll()
@@ -72,6 +74,17 @@ export default function App() {
     requestAnimationFrame(() => document.getElementById(window.location.hash.slice(1))?.scrollIntoView())
   }, [sectionsReady])
 
+  // Load decorative components after first paint (desktop only)
+  const [showDecor, setShowDecor] = useState(false)
+  useEffect(() => {
+    if (isBlog || isAdmin || window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 768) {
+      setShowDecor(false)
+      return
+    }
+    const timer = requestIdleCallback?.(() => setShowDecor(true)) ?? setTimeout(() => setShowDecor(true), 2000)
+    return () => { cancelIdleCallback?.(timer); clearTimeout(timer) }
+  }, [isBlog, isAdmin])
+
   // Projects feed the home page's structured data (same cached request the Projects section uses)
   const { data: projects, loading: projectsLoading } = useProjects()
   useRouteSeo({ path: '/', projects }, !isBlog && !isAdmin && !projectsLoading)
@@ -101,9 +114,9 @@ export default function App() {
     <MotionConfig reducedMotion="user">
       <AnimatePresence>{loading && <Preloader key="preloader" />}</AnimatePresence>
       <div className="overflow-hidden grain relative">
-        <Background />
+        {showDecor && <Suspense fallback={null}><Background /></Suspense>}
         <ScrollProgress />
-        <CustomCursor />
+        {showDecor && <Suspense fallback={null}><CustomCursor /></Suspense>}
         <Navbar path={path} sectionsReady={sectionsReady} />
         <main className="relative z-10 min-h-screen">
           <Hero ready={!loading} />
