@@ -151,6 +151,8 @@ if (!template.includes('<!--seo:start-->') || !template.includes('<!--noscript:s
 // Search engine ownership checks (Google Search Console / Bing Webmaster Tools "HTML tag" method)
 const verifyTags = [
   env.VITE_GOOGLE_SITE_VERIFICATION && `<meta name="google-site-verification" content="${esc(env.VITE_GOOGLE_SITE_VERIFICATION)}" />`,
+  // Hardcoded Google Search Console verification (also works via env var VITE_GOOGLE_SITE_VERIFICATION)
+  `<meta name="google-site-verification" content="8EvocY4z9nbZ3imjvjt8Sut57GJ3dwSnT0w9ZGm3Ohs" />`,
   env.VITE_BING_SITE_VERIFICATION && `<meta name="msvalidate.01" content="${esc(env.VITE_BING_SITE_VERIFICATION)}" />`,
 ]
   .filter(Boolean)
