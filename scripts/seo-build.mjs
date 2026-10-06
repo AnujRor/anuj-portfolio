@@ -14,6 +14,32 @@ const env = loadEnv('production', process.cwd(), '')
 const SITE_URL = (env.VITE_SITE_URL || 'https://anuj-portfolio-rho.vercel.app').replace(/\/$/, '')
 const abs = makeAbs(SITE_URL)
 
+// Google Analytics 4 Measurement ID (env var VITE_GA_ID takes priority)
+const GA_ID = env.VITE_GA_ID || 'G-HPMXK2M34P'
+
+// Async GA4 script (loads after page load, non-render-blocking)
+const analyticsScript = `<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  window.gtag = gtag;
+  gtag('js', new Date());
+  gtag('config', '${GA_ID}');
+</script>
+<script>
+  // Load gtag.js after page load to avoid blocking FCP/LCP
+  const loadGA = () => {
+    const s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=${GA_ID}';
+    document.head.appendChild(s);
+  };
+  if (document.readyState === 'complete') {
+    loadGA();
+  } else {
+    window.addEventListener('load', loadGA, { once: true });
+  }
+</script>`
+
 // ---------- Content (Supabase if configured, otherwise data.js) ----------
 async function fetchTable(table, query) {
   const res = await fetch(`${env.VITE_SUPABASE_URL}/rest/v1/${table}?${query}`, {
@@ -158,9 +184,10 @@ const verifyTags = [
   .filter(Boolean)
   .join('\n    ')
 
-function render(seo, body) {
+function render(seo, body, includeAnalytics = true) {
   return template
     .replace('<!--verify-->', verifyTags)
+    .replace('<!--analytics-->', includeAnalytics ? analyticsScript : '')
     .replace(/<!--seo:start-->[\s\S]*?<!--seo:end-->/, `<!--seo:start-->\n    ${headTags(seo)}\n    <!--seo:end-->`)
     .replace(/<!--noscript:start-->[\s\S]*?<!--noscript:end-->/, `<!--noscript:start-->${body}<!--noscript:end-->`)
 }
@@ -180,7 +207,7 @@ for (const post of posts) {
   const path = `/blog/${post.slug}`
   write(path, render(routeSeo(SITE_URL, { path, post }), postBody(post, posts)))
 }
-write('/admin', render({ title: 'Admin | Anuj', noindex: true, path: '/admin' }, wrap('<p>Admin</p>')))
+write('/admin', render({ title: 'Admin | Anuj', noindex: true, path: '/admin' }, wrap('<p>Admin</p>'), false))
 write('404.html', render(routeSeo(SITE_URL, { path: '/404', notFound: true }), wrap('<h1>Page not found</h1><p><a href="/">Go to the homepage</a></p>')))
 
 // ---------- sitemap.xml & robots.txt ----------
