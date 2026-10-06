@@ -11,7 +11,9 @@ export default function Background() {
 
   useEffect(() => {
     const canvas = canvasRef.current
+    if (!canvas) return
     const ctx = canvas.getContext('2d')
+    if (!ctx) return
     // Lite mode (low-end device, set in index.html) and reduced motion get one static frame only
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches || document.documentElement.classList.contains('perf-lite')
     // Completely disable animation on mobile / coarse pointer / data saver / low-end
