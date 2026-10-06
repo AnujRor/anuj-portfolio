@@ -11,11 +11,7 @@ import { SITE, makeAbs, postMetaDescription, relatedPosts, routeSeo } from '../s
 
 const DIST = 'dist'
 const env = loadEnv('production', process.cwd(), '')
-const SITE_URL = (env.VITE_SITE_URL || 'http://localhost:4173').replace(/\/$/, '')
-if (!env.VITE_SITE_URL) {
-  console.warn('\n⚠️  VITE_SITE_URL is not set — canonical URLs & sitemap use http://localhost:4173.')
-  console.warn('   Add VITE_SITE_URL=https://your-domain.com to .env.local / hosting env before deploying.\n')
-}
+const SITE_URL = (env.VITE_SITE_URL || 'https://anuj-portfolio-rho.vercel.app').replace(/\/$/, '')
 const abs = makeAbs(SITE_URL)
 
 // ---------- Content (Supabase if configured, otherwise data.js) ----------
