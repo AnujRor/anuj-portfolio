@@ -74,8 +74,8 @@ AI Dost is more than an assistant — it's a friend who is always there for you.
 It talks, listens, understands, and helps you with almost anything — just like a real friend.
 Built with the latest AI voice and language models, it learns your preferences and behaves naturally.
 Next, every model will be custom-trained to deliver ultra-realistic, empathetic interactions.`,
-    mainImage: '/assets/ai-dost-voice-ai-anuj-ror-cover.svg',
-    images: ['/assets/ai-dost-voice-ai-anuj-ror-screenshot-1.svg', '/assets/ai-dost-voice-ai-anuj-ror-screenshot-2.svg', '/assets/ai-dost-voice-ai-anuj-ror-screenshot-3.svg', '/assets/ai-dost-voice-ai-anuj-ror-screenshot-4.svg'],
+    mainImage: '/assets/ai-dost-voice-ai-anuj-ror-cover.webp',
+    images: ['/assets/ai-dost-voice-ai-anuj-ror-screenshot-1.webp', '/assets/ai-dost-voice-ai-anuj-ror-screenshot-2.webp', '/assets/ai-dost-voice-ai-anuj-ror-screenshot-3.webp', '/assets/ai-dost-voice-ai-anuj-ror-screenshot-4.webp'],
     tag: 'Flagship',
     tagColor: 'neon-blue',
     techStack: [
@@ -101,8 +101,8 @@ Next, every model will be custom-trained to deliver ultra-realistic, empathetic 
 Ozy Sneakers is a full e-commerce website built to make sneaker shopping effortless.
 Browse the latest kicks, get AI-powered style suggestions, and complete secure one-click checkouts.
 From hot drops to classic fits, Ozy Sneakers brings the sneaker culture to your doorstep.`,
-    mainImage: '/assets/ozy-sneakers-ecommerce-anuj-ror-cover.svg',
-    images: ['/assets/ozy-sneakers-ecommerce-anuj-ror-screenshot-1.svg', '/assets/ozy-sneakers-ecommerce-anuj-ror-screenshot-2.svg', '/assets/ozy-sneakers-ecommerce-anuj-ror-screenshot-3.svg', '/assets/ozy-sneakers-ecommerce-anuj-ror-screenshot-4.svg'],
+    mainImage: '/assets/ozy-sneakers-ecommerce-anuj-ror-cover.webp',
+    images: ['/assets/ozy-sneakers-ecommerce-anuj-ror-screenshot-1.webp', '/assets/ozy-sneakers-ecommerce-anuj-ror-screenshot-2.webp', '/assets/ozy-sneakers-ecommerce-anuj-ror-screenshot-3.webp', '/assets/ozy-sneakers-ecommerce-anuj-ror-screenshot-4.webp'],
     tag: 'E-Commerce',
     tagColor: 'purple-500',
     techStack: [
@@ -128,8 +128,8 @@ From hot drops to classic fits, Ozy Sneakers brings the sneaker culture to your 
 IQ World challenges your brain: choose the correct words from a mix and arrange them into meaningful sentences.
 Each level adds new puzzles, faster timers, and smarter scoring, keeping your mind sharp while you play.
 Built with a custom game engine for smooth, addictive gameplay.`,
-    mainImage: '/assets/iq-world-brain-game-anuj-ror-cover.svg',
-    images: ['/assets/iq-world-brain-game-anuj-ror-screenshot-1.svg', '/assets/iq-world-brain-game-anuj-ror-screenshot-2.svg', '/assets/iq-world-brain-game-anuj-ror-screenshot-3.svg', '/assets/iq-world-brain-game-anuj-ror-screenshot-4.svg'],
+    mainImage: '/assets/iq-world-brain-game-anuj-ror-cover.webp',
+    images: ['/assets/iq-world-brain-game-anuj-ror-screenshot-1.webp', '/assets/iq-world-brain-game-anuj-ror-screenshot-2.webp', '/assets/iq-world-brain-game-anuj-ror-screenshot-3.webp', '/assets/iq-world-brain-game-anuj-ror-screenshot-4.webp'],
     tag: 'Gaming',
     tagColor: 'green-500',
     techStack: [
@@ -155,8 +155,8 @@ Built with a custom game engine for smooth, addictive gameplay.`,
 AI Caption Generator transforms any video into a fully captioned masterpiece.
 Upload any video and our AI instantly understands the speech, adds accurate subtitles, and styles them beautifully.
 Perfect for reels, shorts, tutorials, and YouTube — captions in seconds, not hours.`,
-    mainImage: '/assets/ai-video-caption-generator-anuj-ror-cover.svg',
-    images: ['/assets/ai-video-caption-generator-anuj-ror-screenshot-1.svg', '/assets/ai-video-caption-generator-anuj-ror-screenshot-2.svg', '/assets/ai-video-caption-generator-anuj-ror-screenshot-3.svg', '/assets/ai-video-caption-generator-anuj-ror-screenshot-4.svg'],
+    mainImage: '/assets/ai-video-caption-generator-anuj-ror-cover.webp',
+    images: ['/assets/ai-video-caption-generator-anuj-ror-screenshot-1.webp', '/assets/ai-video-caption-generator-anuj-ror-screenshot-2.webp', '/assets/ai-video-caption-generator-anuj-ror-screenshot-3.webp', '/assets/ai-video-caption-generator-anuj-ror-screenshot-4.webp'],
     tag: 'Creativity',
     tagColor: 'orange-500',
     techStack: [
@@ -182,8 +182,8 @@ Perfect for reels, shorts, tutorials, and YouTube — captions in seconds, not h
 Universal Downloader is the all-in-one video downloader — paste any link and grab your video instantly.
 Supports hundreds of platforms with multiple quality options, from HD to audio-only.`
       .trim(),
-    mainImage: '/assets/universal-video-downloader-anuj-ror-cover.svg',
-    images: ['/assets/universal-video-downloader-anuj-ror-screenshot-1.svg', '/assets/universal-video-downloader-anuj-ror-screenshot-2.svg', '/assets/universal-video-downloader-anuj-ror-screenshot-3.svg', '/assets/universal-video-downloader-anuj-ror-screenshot-4.svg'],
+    mainImage: '/assets/universal-video-downloader-anuj-ror-cover.webp',
+    images: ['/assets/universal-video-downloader-anuj-ror-screenshot-1.webp', '/assets/universal-video-downloader-anuj-ror-screenshot-2.webp', '/assets/universal-video-downloader-anuj-ror-screenshot-3.webp', '/assets/universal-video-downloader-anuj-ror-screenshot-4.webp'],
     tag: 'Utility',
     tagColor: 'sky-500',
     techStack: [
