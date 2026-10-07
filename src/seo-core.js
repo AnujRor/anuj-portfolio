@@ -9,9 +9,9 @@ import { blocksPlainText } from './lib/post-format.js'
 export const SITE = {
   name: `${PROFILE.fullName} | AI Developer`,
   locale: 'en_IN',
-  defaultTitle: `${PROFILE.fullName} | AI Developer & Voice AI Builder, Haryana, India`,
+  defaultTitle: "Hey, I'm Anuj. I Build AI Tools and Use AI for Marketing That Works.",
   defaultDescription:
-    'Anuj Ror is a self-taught AI developer and entrepreneur from Haryana, India, building voice AI assistants like AI Dost, real-time AI agents and smart AI tools.',
+    "I'm Anuj Ror — I build voice AI like AI Dost, and I use AI to run digital marketing that actually converts. Self-taught, Haryana-based, and genuinely obsessed with what AI can do.",
   image: '/og-image.png',
   blogTitle: 'AI & Voice AI Blog: Projects, Tutorials & Lessons',
   blogDescription:
