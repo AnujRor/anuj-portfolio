@@ -67,7 +67,7 @@ export default function Projects() {
                           className="absolute inset-0 flex items-center justify-center"
                           style={{ display: current === i ? 'flex' : 'none', zIndex: current === i ? 2 : 1 }}
                         >
-                          <img src={img} alt={`${project.title} — ${project.tag} project screenshot ${i + 1}`} loading="lazy" decoding="async" width="1200" height="800" className="w-full h-full object-contain p-2" />
+                          <img src={img} alt={`${project.title} by Anuj Ror — ${project.tag} project screenshot ${i + 1}`} loading="lazy" decoding="async" width="1200" height="800" className="w-full h-full object-contain p-2" />
                         </motion.div>
                       ))}
 
@@ -120,7 +120,7 @@ export default function Projects() {
                           className={`cursor-pointer w-1/5 transition-all duration-300 ${current === i ? 'opacity-100' : 'opacity-40 hover:opacity-90'}`}
                         >
                           <div className={`h-14 rounded-md overflow-hidden shadow-md ${current === i ? 'ring-2 ring-neon-blue border border-neon-blue/50' : 'border border-gray-700'}`}>
-                            <img src={img} alt="" aria-hidden="true" loading="lazy" decoding="async" width="160" height="56" className="w-full h-full object-cover" />
+                            <img src={img} alt={`${project.title} by Anuj Ror — thumbnail ${i + 1}`} loading="lazy" decoding="async" width="160" height="56" className="w-full h-full object-cover" />
                             {current === i && <div className="absolute inset-0 bg-neon-blue/10 pointer-events-none" />}
                           </div>
                         </motion.div>
