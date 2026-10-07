@@ -32,6 +32,7 @@ function Cover({ post, className = '', priority }) {
       <img
         src={post.cover}
         alt={`${post.title} by Anuj Ror`}
+        title={`${post.title} - Anuj Ror`}
         loading={priority ? 'eager' : 'lazy'}
         decoding="async"
         width="800"
@@ -186,7 +187,7 @@ function BlogPost({ post, allPosts }) {
           </motion.p>
         )}
         <motion.div {...fadeUp} transition={{ duration: 0.7, delay: 0.15, ease }} className="mt-8 flex items-center gap-3 py-5 border-y border-rule">
-          <img src={PROFILE.photo} alt={PROFILE.fullName} width="44" height="44" loading="lazy" decoding="async" className="w-11 h-11 rounded-full object-cover" />
+          <img src={PROFILE.photo} alt={PROFILE.fullName} title="Anuj Ror - AI Developer and Voice AI Builder from Haryana, India" width="44" height="44" loading="lazy" decoding="async" className="w-11 h-11 rounded-full object-cover" />
           <div>
             <p className="font-ui text-sm font-semibold text-ink">{PROFILE.fullName}</p>
             <Meta post={post} />
@@ -200,7 +201,7 @@ function BlogPost({ post, allPosts }) {
         transition={{ duration: 0.8, delay: 0.2, ease }}
         className="mx-auto max-w-5xl px-4 sm:px-6 mt-10 md:mt-12"
       >
-        <img src={post.cover} alt={`${post.title} by Anuj Ror`} width="1200" height="630" fetchpriority="high" decoding="async" className="w-full max-h-[34rem] object-cover rounded-xl bg-paper-deep" />
+        <img src={post.cover} alt={`${post.title} by Anuj Ror`} title={`${post.title} - Anuj Ror`} width="1200" height="630" fetchpriority="high" decoding="async" className="w-full max-h-[34rem] object-cover rounded-xl bg-paper-deep" />
       </motion.figure>
 
       <div className="mx-auto max-w-[42rem] px-4 sm:px-6 mt-12 md:mt-16 font-serif text-[1.2rem] md:text-[1.3rem] leading-[1.75] text-ink/90">
@@ -245,7 +246,7 @@ function BlogPost({ post, allPosts }) {
         )}
 
         <div className="mt-14 pt-8 border-t border-rule flex items-center gap-4">
-          <img src={PROFILE.photo} alt="Anuj Ror" width="56" height="56" loading="lazy" decoding="async" className="w-14 h-14 rounded-full object-cover" />
+          <img src={PROFILE.photo} alt="Anuj Ror" title="Anuj Ror - AI Developer and Voice AI Builder from Haryana, India" width="56" height="56" loading="lazy" decoding="async" className="w-14 h-14 rounded-full object-cover" />
           <div className="font-ui">
             <p className="text-xs uppercase tracking-[0.18em] text-ink-faint">Written by</p>
             <p className="text-base font-semibold text-ink">

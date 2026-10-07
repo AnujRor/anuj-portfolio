@@ -179,6 +179,7 @@ export default function Hero({ ready = true }) {
                 srcSet={photoSrcSet(hero.photo)}
                 sizes="(min-width: 1024px) 352px, (min-width: 768px) 320px, 256px"
                 alt={`${PROFILE.fullName}, AI developer and voice AI builder from India`}
+                title="Anuj Ror - AI Developer and Voice AI Builder from Haryana, India"
                 width="640"
                 height="640"
                 fetchpriority="high"

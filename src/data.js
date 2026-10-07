@@ -7,8 +7,8 @@ export const PROFILE = {
   dreamer: '19-year-old Self-taught AI Developer',
   from: 'from Harsola, Haryana',
   location: 'Harsola, Kaithal, Haryana, India',
-  photo: '/assets/anuj-ai-entrepreneur.webp',
-  aboutPhoto: '/assets/anuj-ai-builder-harsola-haryana.webp',
+  photo: '/assets/anuj-ror-ai-developer-haryana.webp',
+  aboutPhoto: '/assets/anuj-ror-profile-photo.webp',
   about: {
     paragraphs: [
       "I grew up in Harsola, a small village in Haryana, where building artificial intelligence felt like a distant dream. I decided to learn it anyway.",
@@ -74,8 +74,8 @@ AI Dost is more than an assistant — it's a friend who is always there for you.
 It talks, listens, understands, and helps you with almost anything — just like a real friend.
 Built with the latest AI voice and language models, it learns your preferences and behaves naturally.
 Next, every model will be custom-trained to deliver ultra-realistic, empathetic interactions.`,
-    mainImage: '/assets/ai-dost-voice-ai-friend-cover.svg',
-    images: ['/assets/ai-dost-voice-ai-friend-screenshot-1.svg', '/assets/ai-dost-voice-ai-friend-screenshot-2.svg', '/assets/ai-dost-voice-ai-friend-screenshot-3.svg', '/assets/ai-dost-voice-ai-friend-screenshot-4.svg'],
+    mainImage: '/assets/ai-dost-voice-ai-anuj-ror-cover.svg',
+    images: ['/assets/ai-dost-voice-ai-anuj-ror-screenshot-1.svg', '/assets/ai-dost-voice-ai-anuj-ror-screenshot-2.svg', '/assets/ai-dost-voice-ai-anuj-ror-screenshot-3.svg', '/assets/ai-dost-voice-ai-anuj-ror-screenshot-4.svg'],
     tag: 'Flagship',
     tagColor: 'neon-blue',
     techStack: [
@@ -101,8 +101,8 @@ Next, every model will be custom-trained to deliver ultra-realistic, empathetic 
 Ozy Sneakers is a full e-commerce website built to make sneaker shopping effortless.
 Browse the latest kicks, get AI-powered style suggestions, and complete secure one-click checkouts.
 From hot drops to classic fits, Ozy Sneakers brings the sneaker culture to your doorstep.`,
-    mainImage: '/assets/ozy-sneakers-ai-ecommerce-store-cover.svg',
-    images: ['/assets/ozy-sneakers-ai-ecommerce-store-screenshot-1.svg', '/assets/ozy-sneakers-ai-ecommerce-store-screenshot-2.svg', '/assets/ozy-sneakers-ai-ecommerce-store-screenshot-3.svg', '/assets/ozy-sneakers-ai-ecommerce-store-screenshot-4.svg'],
+    mainImage: '/assets/ozy-sneakers-ecommerce-anuj-ror-cover.svg',
+    images: ['/assets/ozy-sneakers-ecommerce-anuj-ror-screenshot-1.svg', '/assets/ozy-sneakers-ecommerce-anuj-ror-screenshot-2.svg', '/assets/ozy-sneakers-ecommerce-anuj-ror-screenshot-3.svg', '/assets/ozy-sneakers-ecommerce-anuj-ror-screenshot-4.svg'],
     tag: 'E-Commerce',
     tagColor: 'purple-500',
     techStack: [
@@ -128,8 +128,8 @@ From hot drops to classic fits, Ozy Sneakers brings the sneaker culture to your 
 IQ World challenges your brain: choose the correct words from a mix and arrange them into meaningful sentences.
 Each level adds new puzzles, faster timers, and smarter scoring, keeping your mind sharp while you play.
 Built with a custom game engine for smooth, addictive gameplay.`,
-    mainImage: '/assets/iq-world-sentence-brain-game-cover.svg',
-    images: ['/assets/iq-world-sentence-brain-game-screenshot-1.svg', '/assets/iq-world-sentence-brain-game-screenshot-2.svg', '/assets/iq-world-sentence-brain-game-screenshot-3.svg', '/assets/iq-world-sentence-brain-game-screenshot-4.svg'],
+    mainImage: '/assets/iq-world-brain-game-anuj-ror-cover.svg',
+    images: ['/assets/iq-world-brain-game-anuj-ror-screenshot-1.svg', '/assets/iq-world-brain-game-anuj-ror-screenshot-2.svg', '/assets/iq-world-brain-game-anuj-ror-screenshot-3.svg', '/assets/iq-world-brain-game-anuj-ror-screenshot-4.svg'],
     tag: 'Gaming',
     tagColor: 'green-500',
     techStack: [
@@ -155,8 +155,8 @@ Built with a custom game engine for smooth, addictive gameplay.`,
 AI Caption Generator transforms any video into a fully captioned masterpiece.
 Upload any video and our AI instantly understands the speech, adds accurate subtitles, and styles them beautifully.
 Perfect for reels, shorts, tutorials, and YouTube — captions in seconds, not hours.`,
-    mainImage: '/assets/ai-video-caption-generator-cover.svg',
-    images: ['/assets/ai-video-caption-generator-screenshot-1.svg', '/assets/ai-video-caption-generator-screenshot-2.svg', '/assets/ai-video-caption-generator-screenshot-3.svg', '/assets/ai-video-caption-generator-screenshot-4.svg'],
+    mainImage: '/assets/ai-video-caption-generator-anuj-ror-cover.svg',
+    images: ['/assets/ai-video-caption-generator-anuj-ror-screenshot-1.svg', '/assets/ai-video-caption-generator-anuj-ror-screenshot-2.svg', '/assets/ai-video-caption-generator-anuj-ror-screenshot-3.svg', '/assets/ai-video-caption-generator-anuj-ror-screenshot-4.svg'],
     tag: 'Creativity',
     tagColor: 'orange-500',
     techStack: [
@@ -182,8 +182,8 @@ Perfect for reels, shorts, tutorials, and YouTube — captions in seconds, not h
 Universal Downloader is the all-in-one video downloader — paste any link and grab your video instantly.
 Supports hundreds of platforms with multiple quality options, from HD to audio-only.`
       .trim(),
-    mainImage: '/assets/universal-video-downloader-cover.svg',
-    images: ['/assets/universal-video-downloader-screenshot-1.svg', '/assets/universal-video-downloader-screenshot-2.svg', '/assets/universal-video-downloader-screenshot-3.svg', '/assets/universal-video-downloader-screenshot-4.svg'],
+    mainImage: '/assets/universal-video-downloader-anuj-ror-cover.svg',
+    images: ['/assets/universal-video-downloader-anuj-ror-screenshot-1.svg', '/assets/universal-video-downloader-anuj-ror-screenshot-2.svg', '/assets/universal-video-downloader-anuj-ror-screenshot-3.svg', '/assets/universal-video-downloader-anuj-ror-screenshot-4.svg'],
     tag: 'Utility',
     tagColor: 'sky-500',
     techStack: [
@@ -218,7 +218,7 @@ export const BLOG_POSTS = [
     date: '2026-09-10',
     readTime: '5 min read',
     category: 'Journey',
-    cover: '/assets/anuj-ai-entrepreneur.webp',
+    cover: '/assets/anuj-ror-ai-developer-haryana.webp',
     content: [
       "If you drive through Harsola, you won't see anything that screams technology. It's a small village in Kaithal district, Haryana. Fields, tractors, and people who know everyone else's name. Nobody here talks about neural networks or voice models. When people talk about the future, they mostly talk about getting a good, safe job.",
       "That's where I grew up. And for a long time, I thought the people who build AI were a different kind of human. Smart kids from big cities, with big degrees, working in glass offices. Not someone like me.",
@@ -266,7 +266,7 @@ export const BLOG_POSTS = [
     date: '2026-08-22',
     readTime: '5 min read',
     category: 'Projects',
-    cover: '/assets/building-ai-dost-voice-ai-friend-blog-cover.webp',
+    cover: '/assets/building-ai-dost-anuj-ror-blog-cover.webp',
     content: [
       "Most AI assistants feel like customer care. Polite, helpful and a little bit cold. You ask, they answer, and that's the end of it.",
       "I wanted to build something different. Not a smarter search engine, but something closer to a friend. Something you could talk to in the evening after a long day, that would actually listen and reply like it cared about the conversation.",
@@ -317,7 +317,7 @@ export const BLOG_POSTS = [
     date: '2026-07-30',
     readTime: '5 min read',
     category: 'Tech',
-    cover: '/assets/real-time-voice-ai-lessons-blog-cover.webp',
+    cover: '/assets/real-time-voice-ai-anuj-ror-blog-cover.webp',
     content: [
       "When I started building voice AI, I thought the hard part would be the AI itself. Picking the right model, writing the right prompt, that kind of thing.",
       "I was wrong. The model is maybe a third of the work. The rest is everything around it: timing, audio, interruptions, and a lot of small decisions that decide whether a conversation feels natural or awkward.",

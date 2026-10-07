@@ -59,7 +59,7 @@ export default function About() {
                 <div className="absolute inset-0 bg-neon-purple/20 rounded-[2.5rem] blur-2xl translate-x-3 translate-y-3" />
                 <div className="border-spin relative w-full h-full rounded-[2.5rem] p-[3px] bg-dark-slate">
                   <div className="relative w-full h-full rounded-[2.3rem] overflow-hidden">
-                    <img src={about.photo} srcSet={photoSrcSet(about.photo)} sizes="(min-width: 1024px) 320px, (min-width: 768px) 224px, 256px" alt={`${PROFILE.fullName}, AI developer and entrepreneur from Harsola, Haryana`} width="640" height="640" loading="lazy" decoding="async" className="w-full h-full object-cover transition-transform duration-700 hover:scale-110" />
+                    <img src={about.photo} srcSet={photoSrcSet(about.photo)} sizes="(min-width: 1024px) 320px, (min-width: 768px) 224px, 256px" alt={`${PROFILE.fullName}, AI developer and entrepreneur from Harsola, Haryana`} title="Anuj Ror - AI Developer and Voice AI Builder from Haryana, India" width="640" height="640" loading="lazy" decoding="async" className="w-full h-full object-cover transition-transform duration-700 hover:scale-110" />
                     <div className="absolute inset-0 bg-gradient-to-t from-tech-dark/70 via-transparent to-transparent" />
                     <div className="absolute bottom-4 left-4 right-4 glass rounded-xl px-4 py-2 text-sm text-white flex items-center gap-2" style={{ transform: 'translateZ(40px)' }}>
                       <span className="w-2 h-2 rounded-full bg-neon-green animate-pulse" />
