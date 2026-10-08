@@ -169,6 +169,8 @@ const mergeSections = (rows = []) => {
   for (const key of Object.keys(SITE_DEFAULTS)) {
     const saved = rows.find((r) => r.key === key)?.data || {}
     out[key] = { ...SITE_DEFAULTS[key], ...saved }
+    // Rows saved before the image rename still hold old paths; map them to the current files.
+    if (out[key].photo) out[key].photo = asset(out[key].photo)
   }
   return out
 }

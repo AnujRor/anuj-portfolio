@@ -30,6 +30,8 @@ const RENAMED_ASSETS = {
   'profile-hero.webp': 'anuj-ror-ai-developer-haryana.webp',
   'profile-about.png': 'anuj-ror-profile-photo.webp',
   'profile-about.webp': 'anuj-ror-profile-photo.webp',
+  'anuj-ai-entrepreneur.webp': 'anuj-ror-ai-developer-haryana.webp',
+  'anuj-ai-builder-harsola-haryana.webp': 'anuj-ror-profile-photo.webp',
   'profile.svg': 'portfolio-placeholder.webp',
 }
 export const asset = (src) => {
