@@ -70,8 +70,13 @@
   </head>
   <body>
     <div id="root">
-      <!-- Static hero placeholder (removed by React on mount) -->
-      <section id="hero" class="min-h-[100svh] flex flex-col justify-center overflow-hidden pt-24 pb-8" style="background:hsl(var(--tech-dark))">
+      <!-- Static hero placeholder (matches React Hero exactly, removed by React on mount) -->
+      <section id="hero" class="min-h-[100svh] flex flex-col justify-center overflow-hidden pt-24 pb-8 relative" style="background:hsl(var(--tech-dark))">
+        {/* Giant faint wordmark behind the hero */}
+        <div class="absolute inset-x-0 top-1/2 -translate-y-1/2 text-center pointer-events-none select-none" aria-hidden>
+          <span class="font-exo font-bold leading-none text-[28vw] text-outline opacity-40">AI</span>
+        </div>
+
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 z-10 relative flex-1 flex items-center">
           <div class="w-full flex flex-col lg:flex-row items-center justify-between gap-12">
             <div class="w-full lg:w-1/2 text-center lg:text-left">
@@ -79,8 +84,70 @@
                 <span class="relative flex h-2.5 w-2.5"><span class="absolute inline-flex h-full w-full rounded-full bg-neon-green opacity-75 animate-ping"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-neon-green"></span></span>
                 Available for freelance projects & collaborations
               </div>
-              <h1 class="font-exo text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 tracking-wide min-h-[1.2em]" style="visibility:hidden" aria-hidden="true">I am Anuj</h1>
-              <p class="font-exo text-3xl md:text-4xl lg:text-5xl font-bold mb-10 tracking-wide leading-tight" style="visibility:hidden" aria-hidden="true">I build voice AI agents & smart AI tools</p>
+              <h1 class="font-exo text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 tracking-wide min-h-[1.2em]" aria-hidden="true">I am Anuj</h1>
+              <p class="font-exo text-3xl md:text-4xl lg:text-5xl font-bold mb-10 tracking-wide leading-tight">I build voice AI agents & smart AI tools</p>
+              <div class="flex flex-wrap gap-4 justify-center lg:justify-start">
+                <a href="#projects" class="group relative inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-neon-blue text-tech-dark font-semibold overflow-hidden shadow-[0_0_30px_rgba(0,246,255,0.35)]">
+                  <span class="absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]" />
+                  <span class="relative">View My Work</span>
+                  <svg class="relative w-4 h-4 transition-transform duration-300 group-hover:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                </a>
+                <a href="#contact" class="border-spin relative inline-flex items-center gap-2 px-7 py-3.5 rounded-full glass text-white font-semibold hover:text-neon-blue transition-colors">
+                  Let's Talk
+                </a>
+              </div>
+            </div>
+
+            <div class="w-full lg:w-1/2 flex justify-center items-center relative" style="position:relative;">
+              <div class="relative w-64 h-64 md:w-80 md:h-80 lg:w-[22rem] lg:h-[22rem]">
+                <div class="absolute inset-0 bg-neon-blue/30 rounded-full blur-3xl animate-pulse" />
+                <div class="absolute inset-0 -translate-x-4 -translate-y-4 bg-neon-purple/25 rounded-full blur-3xl animate-pulse" style="animation-delay:0.7s" />
+
+                <div class="absolute -inset-3 rounded-full animate-spin-slow" style="background:conic-gradient(from 0deg, #00f6ff, transparent 30%, #b026ff 55%, transparent 80%, #00f6ff)" />
+                <div class="absolute -inset-2 rounded-full bg-tech-dark" />
+
+                <!-- Hero image - matches React Hero exactly -->
+                <img
+                  src="/assets/anuj-ror-ai-developer-haryana.webp"
+                  srcset="/assets/anuj-ror-ai-developer-haryana-480.webp 480w, /assets/anuj-ror-ai-developer-haryana.webp 640w"
+                  sizes="(min-width: 1024px) 352px, (min-width: 768px) 320px, 256px"
+                  alt="Anuj Ror, AI developer and voice AI builder from India"
+                  title="Anuj Ror - AI Developer and Voice AI Builder from Haryana, India"
+                  width="640"
+                  height="640"
+                  fetchpriority="high"
+                  decoding="async"
+                  class="relative rounded-full w-full h-full object-cover animate-float"
+                />
+
+                <div class="absolute -inset-10 md:-inset-14 rounded-full border border-dashed border-neon-blue/25 animate-spin" style="animation-duration:30s">
+                  <div style="left:50%;top:50%;transform:translate(-50%,-50%)" class="absolute w-10 h-10 md:w-12 md:h-12 -ml-5 -mt-5 md:-ml-6 md:-mt-6 rounded-xl glass flex items-center justify-center text-neon-blue shadow-glow animate-spin-reverse"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></div>
+                  <div style="left:70.7%;top:29.3%;transform:translate(-50%,-50%)" class="absolute w-10 h-10 md:w-12 md:h-12 -ml-5 -mt-5 md:-ml-6 md:-mt-6 rounded-xl glass flex items-center justify-center text-neon-blue shadow-glow animate-spin-reverse"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 0 1 10 10c0 4.97-3.55 9.11-8 9.88"></path><line x1="12" y1="6" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg></div>
+                  <div style="left:85.4%;top:64.6%;transform:translate(-50%,-50%)" class="absolute w-10 h-10 md:w-12 md:h-12 -ml-5 -mt-5 md:-ml-6 md:-mt-6 rounded-xl glass flex items-center justify-center text-neon-blue shadow-glow animate-spin-reverse"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 14.24 3c1.25 0 2.45.2 3.57.58"></path><path d="M15 12a1 1 0 1 0-2 0 1 1 0 0 0 2 0z"></path><path d="M3 20h18"></path></svg></div>
+                  <div style="left:50%;top:85.4%;transform:translate(-50%,-50%)" class="absolute w-10 h-10 md:w-12 md:h-12 -ml-5 -mt-5 md:-ml-6 md:-mt-6 rounded-xl glass flex items-center justify-center text-neon-blue shadow-glow animate-spin-reverse"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg></div>
+                </div>
+
+                <div class="absolute -left-6 md:-left-16 top-6 animate-float" style="animation-duration:4s">
+                  <div class="glass rounded-2xl px-4 py-3 flex items-center gap-3 shadow-[0_10px_40px_rgba(0,0,0,0.4)]">
+                    <span class="relative flex h-2.5 w-2.5"><span class="absolute inline-flex h-full w-full rounded-full bg-neon-green opacity-75 animate-ping"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-neon-green"></span></span>
+                    <div class="text-left">
+                      <p class="text-white text-sm font-semibold leading-tight">AI Dost</p>
+                      <p class="text-gray-400 text-[11px]">Voice AI in development</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="absolute -right-4 md:-right-14 bottom-8 animate-float" style="animation-duration:5s;animation-direction:reverse;">
+                  <div class="glass rounded-2xl px-4 py-3 flex items-center gap-3 shadow-[0_10px_40px_rgba(0,0,0,0.4)]">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-neon-blue to-neon-purple flex items-center justify-center text-tech-dark">
+                      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14l-5 4.87L5.91 9.27 10.9 6.26 12 2z"></path></svg>
+                    </div>
+                    <div class="text-left">
+                      <p class="text-white text-sm font-semibold leading-tight">5 AI Projects</p>
+                      <p class="text-gray-400 text-[11px]">Designed & built solo</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
