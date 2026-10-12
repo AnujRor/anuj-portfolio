@@ -170,8 +170,8 @@ function postBody(post, posts) {
 
 // ---------- Write pages ----------
 const template = readFileSync(join(DIST, 'index.html'), 'utf8')
-if (!template.includes('<!--seo:start-->') || !template.includes('<!--noscript:start-->')) {
-  throw new Error('index.html is missing the <!--seo:start--> / <!--noscript:start--> markers')
+if (!template.includes('<!--seo:start-->') || !template.includes('<!--prerender:start-->') || !template.includes('<!--preload-->')) {
+  throw new Error('index.html is missing the <!--seo:start--> / <!--prerender:start--> / <!--preload--> markers')
 }
 
 // Search engine ownership checks (Google Search Console / Bing Webmaster Tools "HTML tag" method)
@@ -184,12 +184,17 @@ const verifyTags = [
   .filter(Boolean)
   .join('\n    ')
 
-function render(seo, body, includeAnalytics = true) {
+// Content preloaded into every page as window.__PRELOADED__, so the app (and Google's
+// renderer) has the posts immediately instead of waiting on a Supabase request.
+let preloadScript = ''
+
+function render(seo, body, includeAnalytics = true, includePreload = true) {
   return template
     .replace('<!--verify-->', verifyTags)
+    .replace('<!--preload-->', includePreload ? preloadScript : '')
     .replace('<!--analytics-->', includeAnalytics ? analyticsScript : '')
     .replace(/<!--seo:start-->[\s\S]*?<!--seo:end-->/, `<!--seo:start-->\n    ${headTags(seo)}\n    <!--seo:end-->`)
-    .replace(/<!--noscript:start-->[\s\S]*?<!--noscript:end-->/, `<!--noscript:start-->${body}<!--noscript:end-->`)
+    .replace(/<!--prerender:start-->[\s\S]*?<!--prerender:end-->/, `<!--prerender:start-->${body}<!--prerender:end-->`)
 }
 
 function write(route, html) {
@@ -201,20 +206,22 @@ function write(route, html) {
 const content = await loadContent()
 const { posts } = content
 
+preloadScript = `<script>window.__PRELOADED__=${JSON.stringify({ posts }).replace(/</g, '\\u003c')}</script>`
+
 write('/', render(routeSeo(SITE_URL, { path: '/', projects: content.projects }), homeBody(content)))
 write('/blog', render(routeSeo(SITE_URL, { path: '/blog', posts }), blogBody(content)))
 for (const post of posts) {
   const path = `/blog/${post.slug}`
   write(path, render(routeSeo(SITE_URL, { path, post }), postBody(post, posts)))
 }
-write('/admin', render({ title: 'Admin | Anuj', noindex: true, path: '/admin' }, wrap('<p>Admin</p>'), false))
+write('/admin', render({ title: 'Admin | Anuj', noindex: true, path: '/admin' }, wrap('<p>Admin</p>'), false, false))
 write('404.html', render(routeSeo(SITE_URL, { path: '/404', notFound: true }), wrap('<h1>Page not found</h1><p><a href="/">Go to the homepage</a></p>')))
 
 // ---------- sitemap.xml & robots.txt ----------
 const today = new Date().toISOString().slice(0, 10)
 const latestPost = posts.map((p) => p.updatedAt || p.date).sort().pop() || today
 const urls = [
-  { loc: '/', lastmod: today, changefreq: 'weekly', priority: '1.0', image: SITE.image },
+  { loc: '/', lastmod: latestPost, changefreq: 'weekly', priority: '1.0', image: SITE.image },
   { loc: '/blog', lastmod: latestPost, changefreq: 'weekly', priority: '0.8' },
   ...posts.map((p) => ({ loc: `/blog/${p.slug}`, lastmod: p.updatedAt || p.date, changefreq: 'monthly', priority: '0.7', image: p.cover && !p.cover.endsWith('.svg') ? p.cover : null })),
 ]

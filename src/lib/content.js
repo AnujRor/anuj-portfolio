@@ -103,8 +103,13 @@ const loadOnce = (key, load) => {
   return cache.get(key)
 }
 
-function useRemote(key, fallback, load) {
-  const [state, setState] = useState({ data: hasSupabase ? [] : fallback, loading: hasSupabase })
+// Content that the build pre-rendered into the page (window.__PRELOADED__). Lets React render
+// the posts on the very first paint — no Supabase round-trip — which is what search engines need.
+const preloaded = typeof window !== 'undefined' ? window.__PRELOADED__ || {} : {}
+
+function useRemote(key, fallback, load, seed) {
+  const seeded = Array.isArray(seed) && seed.length ? seed : null
+  const [state, setState] = useState({ data: seeded || (hasSupabase ? [] : fallback), loading: hasSupabase && !seeded })
   useEffect(() => {
     if (!hasSupabase) return
     let alive = true
@@ -112,7 +117,8 @@ function useRemote(key, fallback, load) {
       .then((rows) => alive && setState({ data: rows, loading: false }))
       .catch((err) => {
         console.warn('Supabase fetch failed, using local content:', err.message)
-        if (alive) setState({ data: fallback, loading: false })
+        // Keep the pre-rendered content if we have it, otherwise fall back to the bundled data
+        if (alive) setState((s) => ({ data: s.data?.length ? s.data : fallback, loading: false }))
       })
     return () => {
       alive = false
@@ -122,7 +128,7 @@ function useRemote(key, fallback, load) {
 }
 
 export function usePosts() {
-  return useRemote('posts', BLOG_POSTS, async () => (await supabaseRest('posts?select=*&published=eq.true&order=published_at.desc')).map(postFromRow))
+  return useRemote('posts', BLOG_POSTS, async () => (await supabaseRest('posts?select=*&published=eq.true&order=published_at.desc')).map(postFromRow), preloaded.posts)
 }
 
 export function useProjects() {

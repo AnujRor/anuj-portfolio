@@ -8,3 +8,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <App />
   </React.StrictMode>,
 )
+
+// Drop the crawlable pre-rendered text from the DOM once the app has taken over
+document.getElementById('prerender')?.remove()
