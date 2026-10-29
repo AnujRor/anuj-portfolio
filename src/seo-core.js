@@ -30,7 +30,10 @@ export const SITE = {
   ],
 }
 
-export const pageTitle = (title) => (title ? `${title} | ${PROFILE.fullName}` : SITE.defaultTitle)
+// Some posts already have "| Anuj Ror" in their meta title, which produced titles like
+// "... | Anuj Ror | Anuj Ror". Strip an existing brand suffix before adding it once.
+const stripBrand = (title) => title.replace(new RegExp(`\\s*[|–—-]\\s*${PROFILE.fullName}\\s*$`, 'i'), '').trim()
+export const pageTitle = (title) => (title ? `${stripBrand(title)} | ${PROFILE.fullName}` : SITE.defaultTitle)
 
 // Post SEO with fallbacks: a missing meta title/description falls back to the title/excerpt
 export const postMetaTitle = (post) => pageTitle(post.metaTitle || post.title)

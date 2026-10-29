@@ -5,6 +5,9 @@
   "outputDirectory": "dist",
   "cleanUrls": true,
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
+  "redirects": [
+    { "source": "/blog/blog-automation", "destination": "/blog", "permanent": true }
+  ],
   "headers": [
     {
       "source": "/assets/(.*)",

@@ -120,8 +120,10 @@ function headTags(seo) {
   return tags.filter(Boolean).join('\n    ')
 }
 
-const wrap = (inner) =>
-  `<main style="max-width:760px;margin:40px auto;padding:0 16px;font-family:sans-serif;line-height:1.6;color:#e0e0e0;background:#0b0f14">${inner}</main>`
+// The blog is a light editorial theme, the portfolio is dark. Keeping the no-JS / first-paint
+// markup on the same theme avoids a dark flash before React renders a blog page.
+const wrap = (inner, light = false) =>
+  `<main style="max-width:760px;margin:40px auto;padding:0 16px;font-family:sans-serif;line-height:1.6;color:${light ? '#1e293b;background:#fbf9f6' : '#e0e0e0;background:#0b0f14'}">${inner}</main>`
 
 const postLinks = (posts) =>
   `<ul>${posts.map((p) => `<li><a href="/blog/${esc(p.slug)}">${esc(p.title)}</a> — ${esc(p.excerpt)}</li>`).join('')}</ul>`
@@ -140,7 +142,7 @@ function homeBody({ posts, projects }) {
     <p><a href="/blog">Blog</a> · <a href="/#contact">Contact</a></p>`)
 }
 
-const blogBody = ({ posts }) => wrap(`<h1>${esc(SITE.blogTitle)}</h1><p>${esc(SITE.blogDescription)}</p>${postLinks(posts)}<p><a href="/">Home</a></p>`)
+const blogBody = ({ posts }) => wrap(`<h1>${esc(SITE.blogTitle)}</h1><p>${esc(SITE.blogDescription)}</p>${postLinks(posts)}<p><a href="/">Home</a></p>`, true)
 
 function postBody(post, posts) {
   const blocks = post.content
@@ -165,13 +167,13 @@ function postBody(post, posts) {
       ${blocks}
       ${post.tags?.length ? `<p>Topics: ${post.tags.map(esc).join(', ')}</p>` : ''}
     </article>
-    ${related.length ? `<h2>Related articles</h2>${postLinks(related)}` : ''}`)
+    ${related.length ? `<h2>Related articles</h2>${postLinks(related)}` : ''}`, true)
 }
 
 // ---------- Write pages ----------
 const template = readFileSync(join(DIST, 'index.html'), 'utf8')
-if (!template.includes('<!--seo:start-->') || !template.includes('<!--prerender:start-->') || !template.includes('<!--preload-->')) {
-  throw new Error('index.html is missing the <!--seo:start--> / <!--prerender:start--> / <!--preload--> markers')
+if (!template.includes('<!--seo:start-->') || !template.includes('<!--prerender:start-->') || !template.includes('<!--preload-->') || !template.includes('<!--shell:start-->')) {
+  throw new Error('index.html is missing the <!--seo:start--> / <!--prerender:start--> / <!--preload--> / <!--shell:start--> markers')
 }
 
 // Search engine ownership checks (Google Search Console / Bing Webmaster Tools "HTML tag" method)
@@ -189,12 +191,22 @@ const verifyTags = [
 let preloadScript = ''
 
 function render(seo, body, includeAnalytics = true, includePreload = true) {
-  return template
+  let html = template
     .replace('<!--verify-->', verifyTags)
     .replace('<!--preload-->', includePreload ? preloadScript : '')
     .replace('<!--analytics-->', includeAnalytics ? analyticsScript : '')
     .replace(/<!--seo:start-->[\s\S]*?<!--seo:end-->/, `<!--seo:start-->\n    ${headTags(seo)}\n    <!--seo:end-->`)
     .replace(/<!--prerender:start-->[\s\S]*?<!--prerender:end-->/, `<!--prerender:start-->${body}<!--prerender:end-->`)
+
+  // The static hero shell belongs to the home page only. On every other route the route's own
+  // content goes straight into #root (React replaces it on mount), so the raw HTML served to
+  // crawlers has the right H1/body instead of the portfolio hero + duplicate H1.
+  if (seo.path !== '/') {
+    html = html
+      .replace(/<!--shell:start-->[\s\S]*?<!--shell:end-->/, body)
+      .replace(/<!--prerender:start-->[\s\S]*?<!--prerender:end-->/, '<!--prerender:start--><!--prerender:end-->')
+  }
+  return html
 }
 
 function write(route, html) {
