@@ -226,7 +226,6 @@ for (const post of posts) {
   const path = `/blog/${post.slug}`
   write(path, render(routeSeo(SITE_URL, { path, post }), postBody(post, posts)))
 }
-write('/admin', render({ title: 'Admin | Anuj', noindex: true, path: '/admin' }, wrap('<p>Admin</p>'), false, false))
 write('404.html', render(routeSeo(SITE_URL, { path: '/404', notFound: true }), wrap('<h1>Page not found</h1><p><a href="/">Go to the homepage</a></p>')))
 
 // ---------- sitemap.xml & robots.txt ----------
