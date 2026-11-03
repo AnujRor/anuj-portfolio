@@ -218,7 +218,7 @@ function write(route, html) {
 const content = await loadContent()
 const { posts } = content
 
-preloadScript = `<script>window.__PRELOADED__=${JSON.stringify({ posts }).replace(/</g, '\\u003c')}</script>`
+preloadScript = `<link rel="preload" as="image" type="image/webp" fetchpriority="high" href="/assets/anuj-ror-ai-developer-haryana.webp" imagesrcset="/assets/anuj-ror-ai-developer-haryana-480.webp 480w, /assets/anuj-ror-ai-developer-haryana.webp 640w" imagesizes="(min-width: 1024px) 352px, (min-width: 768px) 320px, 256px" /><script>window.__PRELOADED__=${JSON.stringify({ posts }).replace(/</g, '\\u003c')}</script>`
 
 write('/', render(routeSeo(SITE_URL, { path: '/', projects: content.projects }), homeBody(content)))
 write('/blog', render(routeSeo(SITE_URL, { path: '/blog', posts }), blogBody(content)))
