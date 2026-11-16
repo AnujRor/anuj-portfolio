@@ -5,6 +5,7 @@
   "outputDirectory": "dist",
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
   "redirects": [
+    { "source": "/blog/anuj", "destination": "/blog/from-harsola-to-ai", "permanent": true },
     { "source": "/blog/blog-automation", "destination": "/blog", "permanent": true }
   ],
   "headers": [
